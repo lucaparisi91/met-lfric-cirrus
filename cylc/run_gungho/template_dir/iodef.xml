@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simulation>
+
+  <!-- file suitable for testing global runs - not for production use -->
+
+  <!-- In this version we have ONE context  -->
+  <context id = "gungho_atm">
+
+  </context>
+
+  <context id = "xios">
+    <variable_definition>
+      <variable_group id = "buffer">
+        <variable id = "optimal_buffer_size" type = "string" >performance</variable>
+        <variable id = "buffer_factor_size" type = "double" >1.0</variable>
+      </variable_group>
+    
+      <variable_group id = "parameters" >
+        <variable id = "using_server" type = "bool" >false</variable>
+        <variable id = "info_level" type = "int" >0</variable>
+        <variable id = "print_file" type="bool">false</variable>
+      </variable_group>
+    </variable_definition>
+  </context>
+
+</simulation>

@@ -1,0 +1,68 @@
+#!Jinja2
+
+
+[scheduler]
+    allow implicit tasks = True
+    {%  set CHUNKSIZE = 4 %}
+    {%  set PARTITION_START = 0 %}
+    {% set NRANKS_LIST = [6 ] %}
+
+[task parameters]
+    mesh_cells_per_dim = 48
+    
+
+[scheduling]
+    [[graph]]
+        R1 = """
+            {% for NRANKS in NRANKS_LIST %}
+                C<mesh_cells_per_dim>_nranks{{NRANKS}}
+            {% endfor %}
+            
+        """
+
+
+[runtime]
+
+{% for NRANKS in NRANKS_LIST %}
+    
+    [[C<mesh_cells_per_dim>]_nranks{{ NRANKS }}]
+        platform = cirrus
+            script = """
+
+    module load PrgEnv-gnu
+    module load cray-hdf5-parallel/1.14.3.5
+    module load cray-netcdf-hdf5parallel/4.9.0.17
+
+    set -x
+    set -e
+    EXE=/work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/latest/lfric_core/mesh_tools/bin/cubedsphere_mesh_generator
+    export OMP_NUM_THREADS=288
+    CELLS_PER_DIM=${CYLC_TASK_PARAM_mesh_cells_per_dim}
+    ${CYLC_RUN_DIR}/${CYLC_WORKFLOW_ID}/generate_mesh/generate_mesh_namelist.sh $CELLS_PER_DIM {{NRANKS}} $PARTITION_START {{ CHUNKSIZE }}
+    srun --cpus-per-task=288 --hint=nomultithread $EXE C${CELLS_PER_DIM}.nml
+
+    ## Move output to install directory
+    INSTALL_DIR=${CYLC_RUN_DIR}/meshes/C${CYLC_TASK_PARAM_mesh_cells_per_dim}
+    mkdir -p $INSTALL_DIR
+    mv *.nc $INSTALL_DIR
+            """
+            [[[directives]]]
+                --nodes = 1
+                --ntasks-per-node = 1
+                --cpus-per-task = 288
+                --time = 00:20:00
+                --partition = standard
+                --account = z04
+                --qos = standard
+                --exclusive = 
+
+
+        {% for PARTITION_START in range(0, NRANKS, CHUNKSIZE) %}
+            [[C<mesh_cells_per_dim>_partition{{ PARTITION_START }}_nranks{{ NRANKS }}]]
+                inherit = C<mesh_cells_per_dim>_nranks{{ NRANKS }}
+
+                [[[environment]]]
+                    PARTITION_START = {{ PARTITION_START }}
+        {% endfor %}
+
+{% endfor %}

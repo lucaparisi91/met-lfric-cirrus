@@ -1,0 +1,7 @@
+{
+    "nodes" : [192],
+    "ppn" : [12],
+    "mesh" : ["C1536"],
+    "opt": ["fast-debug"],
+    "mesh_dir": ["/work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/mesh_scripts" ]
+}

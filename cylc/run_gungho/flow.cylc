@@ -1,0 +1,35 @@
+#!Jinja2
+
+[scheduler]
+    allow implicit tasks = True
+
+
+[scheduling]
+    [[graph]]
+        R1 = """
+            setup_gungho => run_gungho
+        """
+
+[runtime]
+        
+    [[setup_gungho]]
+        platform = localhost
+            script = """
+    
+    python ${CYLC_RUN_DIR}/${CYLC_WORKFLOW_ID}/generate_runs.py setup --nodes 192 \
+                        --ppn 288 \
+                        --mesh C1536 \
+                        --opt fast-debug \
+                        --mesh_dir /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/mesh_scripts \
+                        --template_dir ${CYLC_RUN_DIR}/${CYLC_WORKFLOW_ID}/template_dir \
+                        --working_dir ${CYLC_RUN_DIR}/${CYLC_WORKFLOW_ID}/test_gungho
+            """
+    
+    [[run_gungho]]
+        platform = cirrus
+            script = ${CYLC_RUN_DIR}/${CYLC_WORKFLOW_ID}/test_gungho/run.sh
+            
+            [[[directives]]]
+                #.....
+
+                
