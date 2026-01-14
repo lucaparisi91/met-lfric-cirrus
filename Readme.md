@@ -1,3 +1,8 @@
+
+# Lfric on Cirrus-ex
+
+This repo contains configuration and workflows for gungho benchmarks on cirrus-ex.
+
 ## Scaling with number of threads
 
 Use `C1536` with a local volume of 16x16 .
