@@ -1,0 +1,445 @@
+CrayPat/X:  Version 25.03.0 Revision 5ef9ac5bb rhel9.5_x86_64  01/22/25 23:09:16
+
+Number of PEs (MPI ranks):   13,824
+                           
+Number of Nodes:                192
+                           
+Numbers of PEs per Node:         72  PEs on each of  192  Nodes
+                           
+Numbers of Threads per PE:        4
+                           
+Number of Cores per Socket:     144
+
+Execution start time:  Mon Dec  1 18:12:32 2025
+
+System name and speed:  cs-n0016  2.437 GHz (nominal)
+
+AMD   Turin                CPU  Family: 26  Model: 17  Stepping:  0
+
+Core Performance Boost:  55296 PEs have CPB capability
+
+Current path to data file:
+  /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/runs/nodes192_ppn72_meshC1536_cray_pat_sampling/gungho_model+pat+sampling+3102464-1009996438s   (RTS, 192 data files)
+
+
+Notes for table 1:
+
+  This table shows functions that have significant exclusive time,
+    averaged across ranks, and how much of that time is attributable
+    to each of its call paths.
+  For further explanation, see the "General table notes" below, or 
+    use:  pat_report -v -O callers ...
+
+Table 1:  Profile by Function and Callers
+
+  Samp% |    Samp | Group
+        |         |  Function
+        |         |   Caller
+        |         |    PE=HIDE
+        |         |     Thread=HIDE
+       
+ 100.0% | 9,214.6 | Total
+|-----------------------------------------------------------------------------
+|  44.2% | 4,075.7 | MPI
+||----------------------------------------------------------------------------
+||  35.5% | 3,274.2 | MPI_ALLREDUCE
+|||---------------------------------------------------------------------------
+3||  29.3% | 2,696.1 | __lfric_mpi_mod_MOD_global_sum_real64
+4||        |         |  __scalar_real64_mod_MOD_get_sum
+|||||-------------------------------------------------------------------------
+5||||  16.4% | 1,514.4 | __sci_psykal_light_mod_MOD_invoke_rdouble_x_innerproduct_x
+||||||------------------------------------------------------------------------
+6|||||   8.6% |   792.3 | __sci_r_solver_field_vector_mod_MOD_field_norm_field_vector
+7|||||        |         |  __sci_iterative_solver_mod_MOD_block_gcr_solve
+8|||||        |         |   __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+9|||||        |         |    __semi_implicit_timestep_alg_mod_MOD_run_step
+10||||        |         |     __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+11||||        |         |      __gungho_step_mod_MOD_gungho_step
+12||||        |         |       __gungho_driver_mod_MOD_step
+13||||        |         |        MAIN__
+14||||        |         |         main
+15||||        |         |          __libc_start_call_main
+6|||||   7.8% |   722.1 | __sci_r_solver_field_vector_mod_MOD_norm_field_vector
+7|||||        |         |  __sci_iterative_solver_mod_MOD_block_gcr_solve
+8|||||        |         |   __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+9|||||        |         |    __semi_implicit_timestep_alg_mod_MOD_run_step
+10||||        |         |     __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+11||||        |         |      __gungho_step_mod_MOD_gungho_step
+12||||        |         |       __gungho_driver_mod_MOD_step
+13||||        |         |        MAIN__
+14||||        |         |         main
+15||||        |         |          __libc_start_call_main
+||||||========================================================================
+5||||  12.8% | 1,181.7 | __sci_psykal_light_mod_MOD_invoke_rdouble_x_innerproduct_y
+6||||        |         |  __sci_r_solver_field_vector_mod_MOD_dot_field_vector
+7||||        |         |   __sci_iterative_solver_mod_MOD_block_gcr_solve
+8||||        |         |    __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+9||||        |         |     __semi_implicit_timestep_alg_mod_MOD_run_step
+10|||        |         |      __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+11|||        |         |       __gungho_step_mod_MOD_gungho_step
+12|||        |         |        __gungho_driver_mod_MOD_step
+13|||        |         |         MAIN__
+14|||        |         |          main
+15|||        |         |           __libc_start_call_main
+|||||=========================================================================
+3||   6.0% |   556.1 | __lfric_mpi_mod_MOD_global_min_real64
+4||        |         |  __scalar_real64_mod_MOD_get_min
+5||        |         |   __sci_psykal_builtin_light_mod_MOD_invoke_real64_field_min_max
+6||        |         |    __sci_field_minmax_alg_mod_MOD_get_field_minmax_real64
+7||        |         |     __calc_dep_pts_alg_mod_MOD_calc_ffsl_hori_dep_pts
+||||||||----------------------------------------------------------------------
+8|||||||   3.7% |   341.2 | __flux_precomputations_alg_mod_MOD_compute_dep_dist_inner
+9|||||||        |         |  __flux_precomputations_alg_mod_MOD_get_dep_dist
+10||||||        |         |   __ffsl_hori_alg_mod_MOD_ffsl_hori_swift_inner_alg
+11||||||        |         |    __ffsl_hori_alg_mod_MOD_ffsl_hori_splitting_alg
+12||||||        |         |     __ffsl_control_alg_mod_MOD_ffsl_control
+13||||||        |         |      __split_transport_mod_MOD_split_transport_field
+14||||||        |         |       __split_transport_mod_MOD_split_transport_control
+15||||||        |         |        __transport_field_mod_MOD_transport_field_r_tran
+16||||||        |         |         __transport_field_mod_MOD_transport_field
+|||||||||||||||||-------------------------------------------------------------
+17|||||||||||||||   2.0% |   184.7 | __theta_transport_alg_mod_MOD_theta_transport_alg
+18|||||||||||||||        |         |  __gungho_transport_control_alg_mod_MOD_gungho_transport_control_alg
+19|||||||||||||||        |         |   __semi_implicit_timestep_alg_mod_MOD_run_step
+20|||||||||||||||        |         |    __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+21|||||||||||||||        |         |     __gungho_step_mod_MOD_gungho_step
+22|||||||||||||||        |         |      __gungho_driver_mod_MOD_step
+23|||||||||||||||        |         |       MAIN__
+24|||||||||||||||        |         |        main
+25|||||||||||||||        |         |         __libc_start_call_main
+17|||||||||||||||   1.7% |   156.4 | __gungho_transport_control_alg_mod_MOD_gungho_transport_control_alg
+18|||||||||||||||        |         |  __semi_implicit_timestep_alg_mod_MOD_run_step
+19|||||||||||||||        |         |   __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+20|||||||||||||||        |         |    __gungho_step_mod_MOD_gungho_step
+21|||||||||||||||        |         |     __gungho_driver_mod_MOD_step
+22|||||||||||||||        |         |      MAIN__
+23|||||||||||||||        |         |       main
+24|||||||||||||||        |         |        __libc_start_call_main
+|||||||||||||||||=============================================================
+8|||||||   2.3% |   214.9 | __flux_precomputations_alg_mod_MOD_compute_dep_dist_outer
+9|||||||        |         |  __flux_precomputations_alg_mod_MOD_get_dep_dist
+10||||||        |         |   __ffsl_hori_alg_mod_MOD_ffsl_hori_outer_alg
+11||||||        |         |    __ffsl_hori_alg_mod_MOD_ffsl_hori_splitting_alg
+12||||||        |         |     __ffsl_control_alg_mod_MOD_ffsl_control
+13||||||        |         |      __split_transport_mod_MOD_split_transport_field
+14||||||        |         |       __split_transport_mod_MOD_split_transport_control
+15||||||        |         |        __transport_field_mod_MOD_transport_field_r_tran
+16||||||        |         |         __transport_field_mod_MOD_transport_field
+|||||||||||||||||-------------------------------------------------------------
+17|||||||||||||||   1.3% |   117.4 | __theta_transport_alg_mod_MOD_theta_transport_alg
+18|||||||||||||||        |         |  __gungho_transport_control_alg_mod_MOD_gungho_transport_control_alg
+19|||||||||||||||        |         |   __semi_implicit_timestep_alg_mod_MOD_run_step
+20|||||||||||||||        |         |    __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+21|||||||||||||||        |         |     __gungho_step_mod_MOD_gungho_step
+22|||||||||||||||        |         |      __gungho_driver_mod_MOD_step
+23|||||||||||||||        |         |       MAIN__
+24|||||||||||||||        |         |        main
+25|||||||||||||||        |         |         __libc_start_call_main
+17|||||||||||||||   1.1% |    97.5 | __gungho_transport_control_alg_mod_MOD_gungho_transport_control_alg
+18|||||||||||||||        |         |  __semi_implicit_timestep_alg_mod_MOD_run_step
+19|||||||||||||||        |         |   __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+20|||||||||||||||        |         |    __gungho_step_mod_MOD_gungho_step
+21|||||||||||||||        |         |     __gungho_driver_mod_MOD_step
+22|||||||||||||||        |         |      MAIN__
+23|||||||||||||||        |         |       main
+24|||||||||||||||        |         |        __libc_start_call_main
+|||===========================================================================
+||   7.6% |   696.9 | MPI_Waitall
+3|        |         |  xt_exchanger_mix_isend_irecv_s_exchange
+||||--------------------------------------------------------------------------
+4|||   4.4% |   408.9 | __xt_redist_real_dp_MOD_xt_redist_s_exchange_dp_1d
+5|||        |         |  __halo_comms_mod_MOD_perform_halo_exchange_real64
+6|||        |         |   __field_real64_mod_MOD_halo_exchange
+7|||   1.0% |    87.9 |    __ffsl_hori_alg_mod_psy_MOD_invoke_16
+8|||        |         |     __ffsl_hori_alg_mod_MOD_ffsl_hori_outer_alg
+9|||        |         |      __ffsl_hori_alg_mod_MOD_ffsl_hori_splitting_alg
+10||        |         |       __ffsl_control_alg_mod_MOD_ffsl_control
+11||        |         |        __split_transport_mod_MOD_split_transport_field
+12||        |         |         __split_transport_mod_MOD_split_transport_control
+13||        |         |          __transport_field_mod_MOD_transport_field_r_tran
+14||        |         |           __transport_field_mod_MOD_transport_field
+4|||   3.1% |   288.0 | __xt_redist_real_sp_MOD_xt_redist_s_exchange_sp_1d
+5|||        |         |  __halo_comms_mod_MOD_perform_halo_exchange_real32
+6|||        |         |   __field_real32_mod_MOD_halo_exchange
+7|||   2.1% |   191.1 |    __pressure_operator_alg_mod_psy_MOD_invoke_apply_h
+8|||        |         |     __pressure_operator_alg_mod_MOD_apply_pressure_operator
+9|||   1.6% |   147.9 |      __multigrid_preconditioner_alg_mod_MOD_smooth
+10||        |         |       __multigrid_preconditioner_alg_mod_MOD_vcycle
+11||        |         |        __multigrid_preconditioner_alg_mod_MOD_apply_multigrid_preconditioner
+12||        |         |         __sci_iterative_solver_mod_MOD_precondition_only_solve
+13||        |         |          __mixed_schur_preconditioner_alg_mod_MOD_apply_mixed_schur_preconditioner
+14||        |         |           __sci_iterative_solver_mod_MOD_block_gcr_solve
+15||        |         |            __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+16||        |         |             __semi_implicit_timestep_alg_mod_MOD_run_step
+17||        |         |              __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+18||        |         |               __gungho_step_mod_MOD_gungho_step
+19||        |         |                __gungho_driver_mod_MOD_step
+20||        |         |                 MAIN__
+21||        |         |                  main
+22||        |         |                   __libc_start_call_main
+||============================================================================
+|  43.8% | 4,038.1 | USER
+||----------------------------------------------------------------------------
+||   7.1% |   656.2 | __matrix_vector_kernel_mod_MOD_matrix_vector_code_r_double
+|||---------------------------------------------------------------------------
+3||   2.8% |   256.3 | __sci_mass_matrix_operator_alg_mod_psy_MOD_invoke_0._omp_fn.1
+4||        |         |  GOMP_parallel
+5||        |         |   __sci_mass_matrix_operator_alg_mod_psy_MOD_invoke_0
+6||        |         |    __sci_mass_matrix_operator_alg_mod_MOD_apply_mass_matrix_operator
+7||        |         |     __sci_iterative_solver_mod_MOD_chebyshev_solve
+8||        |         |      __sci_mass_matrix_solver_alg_mod_MOD_mass_matrix_solver_alg
+9||        |         |       __predictors_alg_mod_MOD_predictors_alg
+10|        |         |        __semi_implicit_timestep_alg_mod_MOD_run_step
+11|        |         |         __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+12|        |         |          __gungho_step_mod_MOD_gungho_step
+13|        |         |           __gungho_driver_mod_MOD_step
+14|        |         |            MAIN__
+15|        |         |             main
+16|        |         |              __libc_start_call_main
+3||   1.8% |   167.7 | __rhs_alg_mod_psy_MOD_invoke_1_matrix_vector_kernel_type._omp_fn.0
+4||        |         |  GOMP_parallel
+5||        |         |   __rhs_alg_mod_psy_MOD_invoke_1_matrix_vector_kernel_type
+6||        |         |    __rhs_alg_mod_MOD_rhs_default_alg
+7||        |         |     __rhs_alg_mod_MOD_rhs_alg
+8||        |         |      __semi_implicit_timestep_alg_mod_MOD_run_step
+9||        |         |       __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+10|        |         |        __gungho_step_mod_MOD_gungho_step
+11|        |         |         __gungho_driver_mod_MOD_step
+12|        |         |          MAIN__
+13|        |         |           main
+14|        |         |            __libc_start_call_main
+3||   1.6% |   150.2 | __rhs_alg_mod_psy_MOD_invoke_2._omp_fn.3
+4||        |         |  GOMP_parallel
+5||        |         |   __rhs_alg_mod_psy_MOD_invoke_2
+6||        |         |    __rhs_alg_mod_MOD_rhs_default_alg
+7||        |         |     __rhs_alg_mod_MOD_rhs_alg
+8||        |         |      __semi_implicit_timestep_alg_mod_MOD_run_step
+9||        |         |       __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+10|        |         |        __gungho_step_mod_MOD_gungho_step
+11|        |         |         __gungho_driver_mod_MOD_step
+12|        |         |          MAIN__
+13|        |         |           main
+14|        |         |            __libc_start_call_main
+|||===========================================================================
+||   6.2% |   570.0 | __sci_psykal_light_mod_MOD_invoke_rdouble_x_innerproduct_x._omp_fn.0
+3|        |         |  GOMP_parallel
+4|        |         |   __sci_psykal_light_mod_MOD_invoke_rdouble_x_innerproduct_x
+|||||-------------------------------------------------------------------------
+5||||   3.1% |   285.4 | __sci_r_solver_field_vector_mod_MOD_norm_field_vector
+6||||        |         |  __sci_iterative_solver_mod_MOD_block_gcr_solve
+7||||        |         |   __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+8||||        |         |    __semi_implicit_timestep_alg_mod_MOD_run_step
+9||||        |         |     __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+10|||        |         |      __gungho_step_mod_MOD_gungho_step
+11|||        |         |       __gungho_driver_mod_MOD_step
+12|||        |         |        MAIN__
+13|||        |         |         main
+14|||        |         |          __libc_start_call_main
+5||||   3.1% |   284.6 | __sci_r_solver_field_vector_mod_MOD_field_norm_field_vector
+6||||        |         |  __sci_iterative_solver_mod_MOD_block_gcr_solve
+7||||        |         |   __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+8||||        |         |    __semi_implicit_timestep_alg_mod_MOD_run_step
+9||||        |         |     __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+10|||        |         |      __gungho_step_mod_MOD_gungho_step
+11|||        |         |       __gungho_driver_mod_MOD_step
+12|||        |         |        MAIN__
+13|||        |         |         main
+14|||        |         |          __libc_start_call_main
+|||||=========================================================================
+||   5.0% |   461.6 | __apply_mixed_operator_kernel_mod_MOD_apply_mixed_operator_code
+3|        |         |  __mixed_operator_alg_mod_psy_MOD_invoke_apply_mixed_operator_new._omp_fn.1
+4|        |         |   GOMP_parallel
+5|        |         |    __mixed_operator_alg_mod_psy_MOD_invoke_apply_mixed_operator_new
+6|        |         |     __mixed_operator_alg_mod_MOD_apply_mixed_operator
+7|        |         |      __sci_iterative_solver_mod_MOD_block_gcr_solve
+8|        |         |       __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+9|        |         |        __semi_implicit_timestep_alg_mod_MOD_run_step
+10        |         |         __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+11        |         |          __gungho_step_mod_MOD_gungho_step
+12        |         |           __gungho_driver_mod_MOD_step
+13        |         |            MAIN__
+14        |         |             main
+15        |         |              __libc_start_call_main
+||   5.0% |   457.0 | __sci_psykal_light_mod_MOD_invoke_rdouble_x_innerproduct_y._omp_fn.0
+3|        |         |  GOMP_parallel
+4|        |         |   __sci_psykal_light_mod_MOD_invoke_rdouble_x_innerproduct_y
+5|        |         |    __sci_r_solver_field_vector_mod_MOD_dot_field_vector
+6|        |         |     __sci_iterative_solver_mod_MOD_block_gcr_solve
+7|        |         |      __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+8|        |         |       __semi_implicit_timestep_alg_mod_MOD_run_step
+9|        |         |        __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+10        |         |         __gungho_step_mod_MOD_gungho_step
+11        |         |          __gungho_driver_mod_MOD_step
+12        |         |           MAIN__
+13        |         |            main
+14        |         |             __libc_start_call_main
+||   1.7% |   158.8 | __sci_tri_solve_kernel_mod_MOD_tri_solve_code_r_single
+3|        |         |  __pressure_precon_alg_mod_psy_MOD_invoke_0_tri_solve_kernel_type._omp_fn.0
+4|        |         |   GOMP_parallel
+5|        |         |    __pressure_precon_alg_mod_psy_MOD_invoke_0_tri_solve_kernel_type
+6|        |         |     __pressure_precon_alg_mod_MOD_apply_pressure_preconditioner
+7|        |         |      __multigrid_preconditioner_alg_mod_MOD_smooth
+8|        |         |       __multigrid_preconditioner_alg_mod_MOD_vcycle
+9|        |         |        __multigrid_preconditioner_alg_mod_MOD_apply_multigrid_preconditioner
+10        |         |         __sci_iterative_solver_mod_MOD_precondition_only_solve
+11        |         |          __mixed_schur_preconditioner_alg_mod_MOD_apply_mixed_schur_preconditioner
+12        |         |           __sci_iterative_solver_mod_MOD_block_gcr_solve
+13        |         |            __semi_implicit_solver_alg_mod_MOD_semi_implicit_solver_alg_step
+14        |         |             __semi_implicit_timestep_alg_mod_MOD_run_step
+15        |         |              __semi_implicit_timestep_alg_mod_MOD_semi_implicit_alg_step
+16        |         |               __gungho_step_mod_MOD_gungho_step
+17        |         |                __gungho_driver_mod_MOD_step
+18        |         |                 MAIN__
+19        |         |                  main
+20        |         |                   __libc_start_call_main
+||   1.4% |   133.2 | __sci_psykal_builtin_light_mod_MOD_invoke_real64_field_min_max._omp_fn.0
+3|        |         |  GOMP_parallel
+4|        |         |   __sci_psykal_builtin_light_mod_MOD_invoke_real64_field_min_max
+5|        |         |    __sci_field_minmax_alg_mod_MOD_get_field_minmax_real64
+6|        |         |     __calc_dep_pts_alg_mod_MOD_calc_ffsl_hori_dep_pts
+||   1.3% |   115.4 | __ffsl_flux_xy_kernel_mod_MOD_ffsl_flux_xy_1d
+3|        |         |  __ffsl_flux_xy_special_edge_kernel_mod_MOD_ffsl_flux_xy_special_edge_code
+||   1.1% |   100.3 | __sci_psykal_builtin_light_mod_MOD_invoke_real64_local_field_min_max._omp_fn.0
+3|        |         |  GOMP_parallel
+4|        |         |   __sci_psykal_builtin_light_mod_MOD_invoke_real64_local_field_min_max
+5|        |         |    __sci_field_minmax_alg_mod_MOD_get_local_field_minmax_real64
+6|        |         |     __flux_precomputations_alg_mod_MOD_check_negative_field
+||============================================================================
+|   4.2% |   391.2 | OMP
+||----------------------------------------------------------------------------
+||   3.5% |   321.2 | omp_get_num_procs
+||============================================================================
+|   3.9% |   356.4 | ETC: libgfortran.so.5.0.0
+||----------------------------------------------------------------------------
+||   2.9% |   262.8 | _gfortran_pow_c16_i16
+3|   1.2% |   112.6 |  __sci_coordinate_jacobian_mod_MOD_jacobian_abr2xyz_r_double
+||============================================================================
+|   1.9% |   175.9 | HEAP
+||----------------------------------------------------------------------------
+||   1.3% |   117.6 | free
+||============================================================================
+|   1.0% |    95.7 | ETC: libm.so.6
+||----------------------------------------------------------------------------
+||   1.0% |    95.7 | f64xsubf128
+|=============================================================================
+
+========================  Additional details  ========================
+
+General table notes:
+
+    The default notes for a table are based on the default definition of
+    the table, and do not account for the effects of command-line options
+    that may modify the content of the table.
+    
+    Detailed notes, produced by the pat_report -v option, do account for
+    all command-line options, and also show how data is aggregated, and
+    if the table content is limited by thresholds, rank selections, etc.
+    
+    An imbalance metric in a line is based on values in main threads
+    across multiple ranks, or on values across all threads, as applicable.
+    
+    An imbalance percent in a line is relative to the maximum value
+    for that line across ranks or threads, as applicable.
+    
+    If the number of Calls for a function is shown as "--", then that
+    function was not traced and the other values in its line summarize
+    the data collected for functions that it calls and that were traced.
+    
+Experiment:  samp_cs_time
+
+Sampling interval:  10000 microsecs
+
+Original path to data file:
+  /mnt/lustre/e1000/home/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/runs/nodes192_ppn72_meshC1536_cray_pat_sampling/gungho_model+pat+sampling+3102464-1009996438s/xf-files   (RTS, 192 data files)
+
+Original program:
+  /mnt/lustre/e1000/home/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/lfric_apps_fast-debug_craypat/applications/gungho_model/bin/gungho_model
+
+Instrumented with:  pat_build -o gungho_model+pat+sampling gungho_model
+
+  Option file "apa" contained:
+    -Drtenv=PAT_RT_PERFCTR=default
+    -Drtenv=PAT_RT_EXPERIMENT=samp_cs_time
+    -Drtenv=PAT_RT_SAMPLING_MODE=3
+    -g mpi
+    -g syscall
+    -g io
+    -g dl
+
+Instrumented program:
+  /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/lfric_apps_fast-debug_craypat/applications/gungho_model/bin/gungho_model+pat+sampling
+
+Program invocation:
+  /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/lfric_apps_fast-debug_craypat/applications/gungho_model/bin/gungho_model+pat+sampling configuration.nml
+
+Exit Status:  0 for 13,824 PEs
+
+Thread start functions and creator functions:
+ 13824 threads:  main
+ 41472 threads:  omp_fulfill_event <- omp_fulfill_event
+
+Memory pagesize:  4 KiB
+
+Memory hugepagesize:  Not Available
+
+Programming environment:  GNU
+
+Runtime environment variables:
+  CRAYPAT_LD_LIBRARY_PATH=/opt/cray/pe/perftools/25.03.0/lib64
+  CRAYPAT_OPTS_EXECUTABLE=libexec64/opts
+  CRAYPAT_ROOT=/opt/cray/pe/perftools/25.03.0
+  CRAYPE_VERSION=2.7.34
+  CRAY_DSMML_VERSION=0.3.1
+  CRAY_HDF5_PARALLEL_VERSION=1.14.3.5
+  CRAY_LIBSCI_VERSION=25.03.0
+  CRAY_MPICH_VERSION=8.1.32
+  CRAY_NETCDF_HDF5PARALLEL_VERSION=4.9.0.17
+  CRAY_PERFTOOLS_VERSION=25.03.0
+  GCC_VERSION=14.2
+  GNU_VERSION=14.2
+  LMOD_FAMILY_COMPILER_VERSION=14.2
+  LMOD_FAMILY_CRAYPE_CPU_VERSION=false
+  LMOD_FAMILY_CRAYPE_NETWORK_VERSION=false
+  LMOD_FAMILY_CRAYPE_VERSION=2.7.34
+  LMOD_FAMILY_GCC_COMPILER_VERSION=14.2
+  LMOD_FAMILY_HDF5_VERSION=1.14.3.5
+  LMOD_FAMILY_LIBSCI_VERSION=25.03.0
+  LMOD_FAMILY_MPI_VERSION=8.1.32
+  LMOD_FAMILY_NETCDF_VERSION=4.9.0.17
+  LMOD_FAMILY_PRGENV_VERSION=8.6.0
+  LMOD_FAMILY_SPACK_COMPILER_VERSION=0.2
+  LMOD_VERSION=8.7.55
+  MPICH_DIR=/opt/cray/pe/mpich/8.1.32/ofi/gnu/11.2
+  OMP_NUM_THREADS=4
+  OMP_PLACES=cores
+  PAT_RT_EXPERIMENT=samp_cs_time
+  PAT_RT_PERFCTR=default
+  PAT_RT_PERFCTR_DISABLE_COMPONENTS=nvml,rocm_smi
+  PAT_RT_SAMPLING_MODE=3
+  PERFTOOLS_VERSION=25.03.0
+  PMI_JOBID=17846
+  PMI_LOCAL_RANK=0
+  PMI_LOCAL_SIZE=72
+  PMI_RANK=0
+  PMI_SHARED_SECRET=14425392835096818267
+  PMI_SIZE=13824
+  PMI_UNIVERSE_SIZE=13824
+
+Report time environment variables:
+    CRAYPAT_ROOT=/opt/cray/pe/perftools/25.03.0
+
+Number of MPI control variables collected:  152
+
+  (To see the list, specify: -s mpi_cvar=show)
+
+Report command line options:  -O ca
+
+Operating system:
+  Linux 5.14.0-503.11.1.el9_5.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Sep 30 11:54:45 EDT 2024
+
+Hardware performance counter events:
+   PAPI_TOT_CYC  Undocumented counter
+   PAPI_TOT_INS  Undocumented counter
+   PAPI_TLB_DM   Undocumented counter
+   PAPI_FP_OPS   Undocumented counter
+

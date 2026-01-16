@@ -1,0 +1,148 @@
+CrayPat/X:  Version 25.03.0 Revision 5ef9ac5bb rhel9.5_x86_64  01/22/25 23:09:16
+
+Number of PEs (MPI ranks):   4,608
+                           
+Number of Nodes:               192
+                           
+Numbers of PEs per Node:        24  PEs on each of  192  Nodes
+                           
+Numbers of Threads per PE:      12
+                           
+Number of Cores per Socket:    144
+
+Execution start time:  Tue Dec  2 14:01:35 2025
+
+System name and speed:  cs-n0016  2.306 GHz (nominal)
+
+AMD   Turin                CPU  Family: 26  Model: 17  Stepping:  0
+
+Core Performance Boost:  55296 PEs have CPB capability
+
+Current path to data file:
+  /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/runs/nodes192_ppn24_meshC1536_cray_pat_mpi/gungho_model+pat+mpi+1338678-1009996438t   (RTS, 192 data files)
+
+
+Notes for table 1:
+
+  This table shows the time in each thread, and the imbalance of time
+    across threads, taking for each thread the maximum time across
+    ranks.
+  For further explanation, see the "General table notes" below, or 
+    use:  pat_report -v -O load_imbalance_thread ...
+
+Table 1:  Load Imbalance by Thread
+
+  Max. Time |     Imb. |  Imb. | Thread
+            |     Time | Time% |  PE=HIDE
+           
+ 130.642015 |       -- |    -- | Total
+|----------------------------------------
+| 130.653485 | 0.011471 |  0.0% | thread.0
+|========================================
+
+========================  Additional details  ========================
+
+General table notes:
+
+    The default notes for a table are based on the default definition of
+    the table, and do not account for the effects of command-line options
+    that may modify the content of the table.
+    
+    Detailed notes, produced by the pat_report -v option, do account for
+    all command-line options, and also show how data is aggregated, and
+    if the table content is limited by thresholds, rank selections, etc.
+    
+    An imbalance metric in a line is based on values in main threads
+    across multiple ranks, or on values across all threads, as applicable.
+    
+    An imbalance percent in a line is relative to the maximum value
+    for that line across ranks or threads, as applicable.
+    
+    If the number of Calls for a function is shown as "--", then that
+    function was not traced and the other values in its line summarize
+    the data collected for functions that it calls and that were traced.
+    
+Experiment:  trace
+
+Original path to data file:
+  /mnt/lustre/e1000/home/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/runs/nodes192_ppn24_meshC1536_cray_pat_mpi/gungho_model+pat+mpi+1338678-1009996438t/xf-files   (RTS, 192 data files)
+
+Original program:
+  /mnt/lustre/e1000/home/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/lfric_apps_fast-debug_craypat/applications/gungho_model/bin/gungho_model
+
+Instrumented with:  pat_build -g mpi -o gungho_model+pat+mpi gungho_model
+
+Instrumented program:
+  /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/lfric_apps_fast-debug_craypat/applications/gungho_model/bin/gungho_model+pat+mpi
+
+Program invocation:
+  /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/build_lfric/lfric_apps_fast-debug_craypat/applications/gungho_model/bin/gungho_model+pat+mpi configuration.nml
+
+Exit Status:  0 for 4,608 PEs
+
+Thread start functions and creator functions:
+  4608 threads:  main
+ 50688 threads:  omp_fulfill_event <- omp_fulfill_event
+
+Memory pagesize:  4 KiB
+
+Memory hugepagesize:  Not Available
+
+Programming environment:  GNU
+
+Runtime environment variables:
+  CRAYPAT_LD_LIBRARY_PATH=/opt/cray/pe/perftools/25.03.0/lib64
+  CRAYPAT_OPTS_EXECUTABLE=libexec64/opts
+  CRAYPAT_ROOT=/opt/cray/pe/perftools/25.03.0
+  CRAYPE_VERSION=2.7.34
+  CRAY_DSMML_VERSION=0.3.1
+  CRAY_HDF5_PARALLEL_VERSION=1.14.3.5
+  CRAY_LIBSCI_VERSION=25.03.0
+  CRAY_MPICH_VERSION=8.1.32
+  CRAY_NETCDF_HDF5PARALLEL_VERSION=4.9.0.17
+  CRAY_PERFTOOLS_VERSION=25.03.0
+  GCC_VERSION=14.2
+  GNU_VERSION=14.2
+  LMOD_FAMILY_COMPILER_VERSION=14.2
+  LMOD_FAMILY_CRAYPE_CPU_VERSION=false
+  LMOD_FAMILY_CRAYPE_NETWORK_VERSION=false
+  LMOD_FAMILY_CRAYPE_VERSION=2.7.34
+  LMOD_FAMILY_GCC_COMPILER_VERSION=14.2
+  LMOD_FAMILY_HDF5_VERSION=1.14.3.5
+  LMOD_FAMILY_LIBSCI_VERSION=25.03.0
+  LMOD_FAMILY_MPI_VERSION=8.1.32
+  LMOD_FAMILY_NETCDF_VERSION=4.9.0.17
+  LMOD_FAMILY_PRGENV_VERSION=8.6.0
+  LMOD_FAMILY_SPACK_COMPILER_VERSION=0.2
+  LMOD_VERSION=8.7.55
+  MPICH_DIR=/opt/cray/pe/mpich/8.1.32/ofi/gnu/11.2
+  OMP_NUM_THREADS=12
+  OMP_PLACES=cores
+  PAT_RT_PERFCTR_DISABLE_COMPONENTS=nvml,rocm_smi
+  PERFTOOLS_VERSION=25.03.0
+  PMI_JOBID=17889
+  PMI_LOCAL_RANK=0
+  PMI_LOCAL_SIZE=24
+  PMI_RANK=0
+  PMI_SHARED_SECRET=4351372958416436840
+  PMI_SIZE=4608
+  PMI_UNIVERSE_SIZE=4608
+
+Report time environment variables:
+    CRAYPAT_ROOT=/opt/cray/pe/perftools/25.03.0
+
+Number of MPI control variables collected:  152
+
+  (To see the list, specify: -s mpi_cvar=show)
+
+Report command line options:  -T -O load_imbalance_thread
+
+Operating system:
+  Linux 5.14.0-503.11.1.el9_5.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Sep 30 11:54:45 EDT 2024
+
+Instrumentation overhead could not be estimated.
+
+Number of traced functions that were called:  5
+
+  (To see the list, specify:  -s traced_functions=show)
+
