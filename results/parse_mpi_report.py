@@ -42,6 +42,8 @@ class CallstackNode:
         self.parent = None
         self.children = {}
         self.level = 0
+        self.timing = []
+
     def attach(self,parent):
         if self.parent is not None:
             # Invalid state
@@ -50,7 +52,7 @@ class CallstackNode:
         self.parent = parent
         self.parent.children[self.name] = self
         self.level = parent.level + 1
-    
+
     def get_parent_at_level(self,level):
 
         """ Get the ancestor node at a specific level."""
@@ -66,7 +68,7 @@ class CallstackNode:
 
     def __getitem__(self, key):
         return self.children[key]
-    
+
     def keys(self):
         return self.children.keys()
         
@@ -76,11 +78,23 @@ class CallstackNode:
 
         return description
 
-    
-    
 
+def extract_pid_from_name(name: str) -> int:
+    """
+    Extract the process ID from a name string formatted as 'pe.<pid>'.
 
+    Args:
+        name: The name string containing the process ID.
+    Returns:
+        The extracted process ID as an integer.
+    """
 
+    pattern = r'pe\.(\d+)'
+    match = re.match(pattern, name)
+    if match:
+        return int(match.group(1))
+    else:
+        raise ValueError(f"Invalid name format: {name}. Expected format 'pe.<pid>'.")
 
 def parse_data_line(line: str) -> dataLine:
     """
@@ -145,14 +159,28 @@ def extract_mpi_callstack_data(report_file):
             data_line = parse_data_line(line)
             if data_line is not None:
                 if not data_line.name.startswith("pe"):
-                        if data_line.level == 0:
+                        if root is None: # Create a level 0 root node
                            root= CallstackNode(data_line.name)
                            current_node=root
-                        else:
+                        else: # Create a child node and attach it to the parent in the tree at level = line level   - 1
                            current_node=current_node.get_parent_at_level(data_line.level -1)
                            child = CallstackNode(data_line.name)
                            child.attach(current_node)
                            current_node=child
+                else: # This is a data entry for a specific pe
+                    pid=extract_pid_from_name(data_line.name)
+                    time=data_line.time
+                    current_node=current_node.get_parent_at_level(data_line.level -1)
+                    current_node.timing.append((pid, time))
+                    
+
+
+
+                    
+
+                    
+                        
+                    
 
 
 
@@ -164,7 +192,7 @@ def extract_mpi_callstack_data(report_file):
                 pass
                 #print(f"Section closed at level {closure_level}")
                             
-    print(f"Callstack Structure: {root.children['MPI'].children['MPI_Waitall']}")
+    print(f"Callstack Structure: {root.children['MPI']['MPI_ALLREDUCE']['__lfric_mpi_mod_MOD_global_sum_real64']}")
 
     # Create DataFrame
     df = pd.DataFrame(data)
