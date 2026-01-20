@@ -261,6 +261,4 @@ def extract_mpi_callstack_data(report_file):
 
 # Parse the report
 root = extract_mpi_callstack_data(test_file)
-print(root["MPI"].timing)
-# Display results
-#print(gather_timing_data(root["MPI"]["MPI_Waitall"]).aggregate({'time': ['min','max','std','mean']}))
+print(root["USER"].timing.aggregate({'time':['min','max','mean','std']}) )
