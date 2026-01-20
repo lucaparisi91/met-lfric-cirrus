@@ -38,11 +38,39 @@ def parse_section_closure(line: str) -> bool:
 
 class CallstackNode:
     def __init__(self,name):
+        """ Node in a callstack tree representing a subroutine/function call. Also contains profiling data.
+        Args:
+            name: Name of the subroutine/function.
+        """
         self.name = name
         self.parent = None
         self.children = {}
         self.level = 0
-        self.timing = []
+        self._timing = []
+
+
+    def record_time(self,pid: int ,time: float):
+        """ Record timing data for a specific process ID (pid) for this callpath.
+        self._timing.append((pid,time))
+        
+        Args:
+            pid: Process ID.
+            time: Time spent in this subroutine/function for the given pid.
+        """
+
+        self._timing.append((pid, time))
+
+    @property
+    def timing(self) -> pd.DataFrame:
+        """ Get timing data for all subpaths in the tree. This is equal to the sum of all subroutines called by this subroutine, including itself.
+        
+        Returns:
+            A pandas DataFrame with columns 'pid' and 'time', where 'pid' is the process ID and 'time' is the total time spent in this subroutine and its children in seconds.
+        """
+
+        return self._gather_timing_data()
+
+
 
     def attach(self,parent):
         if self.parent is not None:
@@ -64,7 +92,7 @@ class CallstackNode:
         while node.level > level:
             node=node.parent
         return node
-    
+
 
     def __getitem__(self, key):
         return self.children[key]
@@ -78,6 +106,38 @@ class CallstackNode:
 
         return description
 
+
+    def _gather_timing_data(self) -> pd.DataFrame:
+        """
+        Helper method to recursively gather timing data from the callstack tree.
+        
+        Args:
+            node: The current CallstackNode to process.
+        Returns:
+            A list of dictionaries containing timing data for each node.
+        """
+        
+        data = []
+
+        # Gather timing data for the current node
+        for pid, time in self._timing:
+            data.append({
+                'pid': pid,
+                'time': time
+            })
+        
+        data_df= pd.DataFrame(data) # Convert to a DataFrame
+
+
+        # Recursively gather timing data from child nodes
+        for child in self.children.values():
+            data_df = pd.concat([data_df, child._gather_timing_data()], ignore_index=True)
+        
+        # Reduce time by pid to get total time per pid for this node and its children
+        data_df = data_df.groupby('pid', as_index=False).sum()
+
+        
+        return data_df
 
 def extract_pid_from_name(name: str) -> int:
     """
@@ -136,6 +196,10 @@ def parse_data_line(line: str) -> dataLine:
 def extract_mpi_callstack_data(report_file):
     """
     Extract MPI function timing data with callstack information from a Cray PAT report.
+    Args:
+        report_file: Path to the Cray PAT report file.
+    Returns:
+        A CallstackNode representing the root of the callstack tree.
     """
 
     data=[]
@@ -171,7 +235,7 @@ def extract_mpi_callstack_data(report_file):
                     pid=extract_pid_from_name(data_line.name)
                     time=data_line.time
                     current_node=current_node.get_parent_at_level(data_line.level -1)
-                    current_node.timing.append((pid, time))
+                    current_node.record_time(pid, time)
                     
 
 
@@ -191,18 +255,12 @@ def extract_mpi_callstack_data(report_file):
             if closure_level is not None:
                 pass
                 #print(f"Section closed at level {closure_level}")
-                            
-    print(f"Callstack Structure: {root.children['MPI']['MPI_ALLREDUCE']['__lfric_mpi_mod_MOD_global_sum_real64']}")
-
-    # Create DataFrame
-    df = pd.DataFrame(data)
-    return df
+    
+    return root
 
 
 # Parse the report
-df = extract_mpi_callstack_data(test_file)
-
+root = extract_mpi_callstack_data(test_file)
+print(root["MPI"].timing)
 # Display results
-print(f"\nExtracted {len(df)} MPI callstack entries")
-print(f"\nSample data:")
-print(df.head(20))
+#print(gather_timing_data(root["MPI"]["MPI_Waitall"]).aggregate({'time': ['min','max','std','mean']}))
