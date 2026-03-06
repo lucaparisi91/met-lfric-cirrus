@@ -30,15 +30,15 @@ class Yaxt(AutotoolsPackage):
     version("0.9.1", sha256="10414d55a1e5572a5036d19830c499de5f6dfe9be4eb097b0009e27b81d6211b")
     version("0.9.0", sha256="8a403294ecc7a3d32e8b4f168f548b443f21dac7d846f7fe3b6242ca663fafb3")    
 
-    depends_on("c")
-    depends_on("cxx")
-    depends_on("fortran")
-
     depends_on("mpi")
     depends_on("autoconf", type="build", when=" build_system=autotools")
     depends_on("automake", type="build", when="build_system=autotools")
     depends_on("libtool", type="build", when="build_system=autotools")
     
+
+    depends_on("cxx", type='build')
+    depends_on("c", type='build')
+    depends_on("fortran", type='build')
 
     # Require generic-names when MPI is provided by intel-oneapi-mpi, e.g.
     # depends_on("intel-oneapi-mpi+generic-names")
@@ -87,7 +87,7 @@ class Yaxt(AutotoolsPackage):
     def setup_run_environment(self, env):
         
         """Setup custom variables in the generated module file"""
-
+        
         env.prepend_path("FFLAGS", "-I"+self.spec.prefix.include, " ")
         env.prepend_path("CPPFLAGS", "-I"+self.spec.prefix.include, " ")
         env.prepend_path("LDFLAGS", "-L" + self.spec.prefix.lib + " -Wl,-rpath=" + self.spec.prefix.lib, " ")

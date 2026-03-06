@@ -3,14 +3,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.pfunit.package import Pfunit as BasePfunit
 import os
 from spack.package import *
+from spack_repo.builtin.packages.pfunit.package import Pfunit as BasePfunit
 
 class Pfunit(BasePfunit):
 
     patch("Make-stops-explicit-about-their-return-code.patch", when="@4.10.0:4.12.0")
-
 
     def setup_run_environment(self, env):
         """Setup custom variables in the generated module file"""
