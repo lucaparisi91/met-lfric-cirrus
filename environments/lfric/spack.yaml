@@ -5,21 +5,23 @@
 
 spack:
   specs:
-  - metoffice.lfric-meta@2.2 %gcc_all
-  - subversion %gcc_all
-  - metoffice.pfunit +mpi +openmp %gcc_all
-  - hpctoolkit
-  - hpcviewer
-  - py-cylc-flow ^py-protobuf %cce
+    - lfric-meta@2.2 ^xios ^blitz%cce_all ^boost%cce_all %cce_all
+    - lfric-meta@3.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
+    - pfunit +mpi +openmp %gcc_all
+    # - pfunit +mpi +openmp %cce_all
+    - fcm %gcc ^perl-tk cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int" ^apr cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int"
+    - rose-picker
+#  - hpctoolkit
+#  - hpcviewer
   concretizer:
     unify: false
-    splice:
+    splice::
       automatic: false
   config:
     install_tree:
-      root: /mnt/lustre/e1000/home/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/lfric/opt
+      root: /work/z19/shared/lparisi/met-lfric-cirrus/opt
       padding_length: 120
   repos:
-    metoffice: /mnt/lustre/e1000/home/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/repos/metoffice/spack_repo/metoffice
+    metoffice: /work/z19/shared/lparisi/met-lfric-cirrus/repos/metoffice/spack_repo/metoffice
 
   view: false
