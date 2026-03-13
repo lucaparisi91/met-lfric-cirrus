@@ -39,7 +39,7 @@
     CELLS_PER_DIM=${CYLC_TASK_PARAM_mesh_cells_per_dim}
     ${CYLC_RUN_DIR}/${CYLC_WORKFLOW_ID}/generate_mesh/generate_mesh_namelist.sh $CELLS_PER_DIM {{NRANKS}} $PARTITION_START {{ CHUNKSIZE }}
     srun --cpus-per-task=288 --hint=nomultithread $EXE C${CELLS_PER_DIM}.nml
-
+    
     ## Move output to install directory
     INSTALL_DIR=${CYLC_RUN_DIR}/meshes/C${CYLC_TASK_PARAM_mesh_cells_per_dim}
     mkdir -p $INSTALL_DIR

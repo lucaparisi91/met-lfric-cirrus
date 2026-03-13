@@ -19,9 +19,9 @@ spack:
       automatic: false
   config:
     install_tree:
-      root: /work/z19/shared/lparisi/met-lfric-cirrus/opt
+      root: /work/d435/d435/lparisid435/met-lfric-cirrus/opt
       padding_length: 120
   repos:
-    metoffice: /work/z19/shared/lparisi/met-lfric-cirrus/repos/metoffice/spack_repo/metoffice
+    metoffice: /work/d435/d435/lparisid435/met-lfric-cirrus/repos/metoffice/spack_repo/metoffice
 
   view: false

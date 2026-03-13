@@ -145,13 +145,12 @@ def generate_job_folder(param) -> str:
 
     launcher="" # Launcher command between srun and the executable
     pre_script="" # Script to execute before the body
-
+    
     # If profiling with hpctoolkit
     if param["profiler"] and param["profiler"]["tool"] == "hpctoolkit":
         launcher="hpcrun -o hpctoolkit-gungho_model-measurements"
         pre_script="""
-source /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/env.sh
-module load spack/1.0.2/epcc-config-0.2
+module load spack
 spack env activate /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/lfric
 spack env activate /work/z04/shared/lparisi/software-cirrus-ex/spack-cirrus-ex/test_lfric/environments/lfric/
 spack load hpctoolkit
