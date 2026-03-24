@@ -3,7 +3,7 @@
 OPT=fast-debug # Optimisiation level to pass to ghungho_model: debug, fast-debug, production
 CRAYPAT=0 # Wether to instrument the execuatable with Craypat
 DOWNLOAD=0 # Whether to download the model code from code.metoffice.gov.uk
-CLEAN=1 # Whether to clean the build directory before building
+CLEAN=0 # Whether to clean the build directory before building
 
 # Load environment modules and activate spack environment
 module load spack
@@ -66,8 +66,8 @@ if [ $CLEAN -eq 1 ]; then
     rm -rf $ROOT_DIR/$LFRIC_APPS_DIR/applications/gungho_model/working/
 fi
 
-#-p "meto-azspice"
-VERBOSE=1 python local_build.py  -a gungho_model -c ../../$LFRIC_CORE_DIR  -j 1 2>&1 | tee build_cce.log
+
+VERBOSE=1 python local_build.py -p "meto-azspice"  -a gungho_model -c ../../$LFRIC_CORE_DIR  -j 1 2>&1 | tee build_cce.log
 
 
 
