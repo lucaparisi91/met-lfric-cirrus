@@ -21,6 +21,6 @@ You can load the lfric dependencies using
 ```bash
 module use $REPO_ROOT/environments/lfric/modules/Core
 module -I load lfric-meta-spack-gcc/3.1.1
-``
+```
 
 where REPO_ROOT is the folder containing a copy of this repo ( i.e. `/work/d435/d435/shared/lparisid435/met-lfric-cirrus`)
