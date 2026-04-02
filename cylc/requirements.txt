@@ -1,0 +1,11 @@
+pandas
+numpy
+cylc-flow
+cylc-uiserver
+cylc-rose
+metomi-rose
+f90nml
+filelock
+tqdm
+jmespath
+pandas

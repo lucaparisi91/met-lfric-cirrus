@@ -1,0 +1,25 @@
+[platforms]
+    [[localhost]]
+        hosts = localhost
+        install target = localhost
+        global init-script = """
+            export EXPERIMENTS_ROOT_DIR=/work/d435/d435/lparisid435/met-lfric-cirrus
+            export CYLC_RUN_DIR=${EXPERIMENTS_ROOT_DIR}/runs/cylc-run
+            source ${EXPERIMENTS_ROOT_DIR}/cylc/run_gungho/bin/activate
+            export HOME=${EXPERIMENTS_ROOT_DIR}/runs
+        """
+    [[cirrus]]
+        hosts = localhost
+        job runner = slurm
+        install target = localhost
+        global init-script = """
+            export EXPERIMENTS_ROOT_DIR=/work/d435/d435/lparisid435/met-lfric-cirrus
+            export CYLC_RUN_DIR=${EXPERIMENTS_ROOT_DIR}/runs/cylc-run
+            source ${EXPERIMENTS_ROOT_DIR}/cylc/run_gungho/bin/activate
+            export HOME=${EXPERIMENTS_ROOT_DIR}/runs
+        """
+
+[install]
+    [[symlink dirs]]
+        [[[localhost]]]
+            run = /work/d435/d435/lparisid435/met-lfric-cirrus/runs

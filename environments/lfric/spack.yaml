@@ -4,24 +4,62 @@
 # configuration settings.
 
 spack:
+
   specs:
     - lfric-meta@2.2 ^xios ^blitz%cce_all ^boost%cce_all %cce_all
     - lfric-meta@3.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
+    - lfric-meta@3.1.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
+    - lfric-meta@3.1.1 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
+    
+    
     - pfunit +mpi +openmp %gcc_all
     # - pfunit +mpi +openmp %cce_all
     - fcm %gcc ^perl-tk cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int" ^apr cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int"
     - rose-picker
-#  - hpctoolkit
-#  - hpcviewer
+    - hpctoolkit
+    - hpcviewer
   concretizer:
     unify: false
     splice::
       automatic: false
   config:
     install_tree:
-      root: /work/d435/d435/lparisid435/met-lfric-cirrus/opt
+      root: $env/opt
       padding_length: 120
   repos:
-    metoffice: /work/d435/d435/lparisid435/met-lfric-cirrus/repos/metoffice/spack_repo/metoffice
+    metoffice: $env/repos/metoffice/spack_repo/metoffice
+  
+  modules:
+    lmod:
+      root: $env/modules
+      hash_length: 0
+      hierarchy:: [] # Disable using mpi hierarchy
+      core_compilers: [gcc,cce,intel-oneapi-compilers] # Disable using compiler hierarchy
+      hide_implicits: true
+      all:
+        autoload: run
+      
+      exclude:
+      - cray-mpich
+      - cray-libsci
+      - libfabric
+      - fftw
+      - hdf5
+      - cray-fftw
+      - parallel-netcdf
+      - netcdf-cxx4
+      - netcdf-fortran
+    arch_folder: false
 
+  
+  prefix_inspections:
+    ./lib:
+      - LD_LIBRARY_PATH
+      - LIBRARY_PATH
+    ./lib64:
+      - LD_LIBRARY_PATH
+      - LIBRARY_PATH
+    ./include:
+      - CPATH
+  
   view: false
