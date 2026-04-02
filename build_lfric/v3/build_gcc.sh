@@ -2,7 +2,8 @@
 OPT=fast-debug # Optimisiation level to pass to ghungho_model: debug, fast-debug, production
 CRAYPAT=0 # Wether to instrument the execuatable with Craypat
 DOWNLOAD=1 # Whether to download the model code from code.metoffice.gov.uk
-RELEASE=3.0 # LFRic release to checkout from github
+RELEASE_APPS=3.1.1 # LFRic release to checkout from github
+RELEASE_CORE=3.1 # LFRic release to checkout from github  
 CLEAN=1 # Whether to clean the build directory before building
 MODEL=lfric_atm 
 
@@ -12,7 +13,7 @@ set -e
 module load spack
 spack env activate ../../environments/lfric
 module load cray-python
-spack load lfric-meta@3.0 %gcc
+spack load lfric-meta@$RELEASE_APPS %gcc
 spack load pfunit
 module load PrgEnv-gnu
 
@@ -29,8 +30,9 @@ set -x
 
 ROOT_DIR=$(pwd)
 
-LFRIC_APPS_DIR=lfric_apps_$OPT
-LFRIC_CORE_DIR=lfric_core_$OPT
+LFRIC_APPS_DIR=lfric_apps_$OPT_$RELEASE_APPS
+LFRIC_CORE_DIR=lfric_core_$OPT_$RELEASE_CORE
+
 
 # Add _craypat to directory names if CrayPat is enabled
 if [ $CRAYPAT -eq 1 ]; then
@@ -41,19 +43,11 @@ fi
 # --- Download the model code if enabled ---
 if [ $DOWNLOAD -eq 1 ]; then
     rm -irf $LFRIC_APPS_DIR $LFRIC_CORE_DIR
-    wget https://github.com/MetOffice/lfric_apps/archive/refs/tags/vn$RELEASE.tar.gz -O lfric_apps-vn$RELEASE.tar.gz
-    tar -xzvf lfric_apps-vn$RELEASE.tar.gz
-    rm -f lfric_apps-vn$RELEASE.tar.gz
-    mv lfric_apps-vn$RELEASE $LFRIC_APPS_DIR
-
-    wget https://github.com/MetOffice/lfric_core/archive/refs/tags/vn$RELEASE.tar.gz -O lfric_core-vn$RELEASE.tar.gz
-    tar -xzvf lfric_core-vn$RELEASE.tar.gz
-    rm -f lfric_core-vn$RELEASE.tar.gz
-    mv lfric_core-vn$RELEASE $LFRIC_CORE_DIR
-
-
+    git clone -b vn$RELEASE_APPS git@github.com:MetOffice/lfric_apps.git $LFRIC_APPS_DIR
+    
+    git clone -b vn$RELEASE_CORE git@github.com:MetOffice/lfric_core.git $LFRIC_CORE_DIR
+    
 fi
-
 
 # export FFLAGS="-I $XIOS_ROOT/inc -I /software/projects/pawsey0835/ddeeptimahanti/setonix/2025.08/software/linux-sles15-zen3/gcc-14.2.0/yaxt-0.11.3-vxxancnxeqjvwc5nx7zm4kyw6b3f56bu/include/"
 # export LIBRARY_PATH=$XIOS_ROOT/lib:$LIBRARY_PATH
@@ -71,8 +65,13 @@ export FC=ftn
 if [ $CLEAN -eq 1 ]; then
     rm -rf $ROOT_DIR/$LFRIC_APPS_DIR/applications/$MODEL/working/
 fi
-#-p "meto-azspice"
-VERBOSE=1 python local_build.py -v  -c ../../$LFRIC_CORE_DIR -o $OPT $MODEL -j 16 2>&1 | tee $ROOT_DIR/build_gcc.log
+
+
+PSYCLONE_DIR=$(spack find -dlp lfric-meta@$RELEASE_APPS | grep psyclone | sed -E "s\.*/work\/work\g") # Get the root directory for py-psyclone from spack
+export PSYCLONE_CONFIG=$PSYCLONE_DIR/share/psyclone/psyclone.cfg
+
+
+VERBOSE=3 python local_build.py -p "meto-azspice" -v  -c ../../$LFRIC_CORE_DIR -o $OPT $MODEL -j 16 2>&1 | tee $ROOT_DIR/build_gcc.log
 
 # If craypat is enabled, instrument the model
 
