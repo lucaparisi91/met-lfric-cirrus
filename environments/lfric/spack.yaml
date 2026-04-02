@@ -38,8 +38,8 @@ spack:
       lmod:
         projections:
           all: '{name}/{version}' 
-          '%cce': '{name}-spack-cce/{version}'
-          '%gcc': '{name}-spack-gcc/{version}'
+          '%cce': '{name}-cce/{version}'
+          '%gcc': '{name}-gcc/{version}'
         
         hash_length: 0
         hierarchy:: [] # Disable using mpi hierarchy
