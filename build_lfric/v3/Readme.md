@@ -7,3 +7,4 @@ bash build_gcc.sh
 ```
 
 You might need to modify some the environment variables at the top of the file.
+You also will need to setup ssh access to github, with the same account added to the MetOffice organization.
