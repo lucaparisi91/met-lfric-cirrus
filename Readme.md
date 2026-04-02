@@ -3,17 +3,24 @@
 
 This repo contains configuration and workflows for gungho benchmarks on cirrus-ex.
 
-## Scaling with number of threads
+## Building the spack environment
 
-Use `C1536` with a local volume of 16x16 .
+```bash
+module load spack
+spack env activate environments/lfric
+spack install
+spack install
+spack install
+spack module lmod refresh --delete-tree -y
+```
 
-nodes=192
-tasks per node=288,12,72,144,(36 ?)
 
-## Weak scaling
+The build might fail the first time due to a quirk of yaxt, which fails at the first attempt, but succeeds at the second. You might need to call `spack install` several times, before succeeding.
+You can load the lfric dependencies using 
 
-nodes=192,48,12
+```bash
+module use $REPO_ROOT/environments/lfric/modules/Core
+module -I load lfric-meta-spack-gcc/3.1.1
+``
 
-$N= 6* l_i^{2d_i}$
-
-$N_X=(16*16*N/6)^{\frac{1}{2}}$
+where REPO_ROOT is the folder containing a copy of this repo ( i.e. `/work/d435/d435/shared/lparisid435/met-lfric-cirrus`)

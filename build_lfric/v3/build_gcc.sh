@@ -1,24 +1,20 @@
 
 OPT=fast-debug # Optimisiation level to pass to ghungho_model: debug, fast-debug, production
 CRAYPAT=0 # Wether to instrument the execuatable with Craypat
-DOWNLOAD=1 # Whether to download the model code from code.metoffice.gov.uk
+DOWNLOAD=0 # Whether to download the model code from code.metoffice.gov.uk
 RELEASE_APPS=3.1.1 # LFRic release to checkout from github
 RELEASE_CORE=3.1 # LFRic release to checkout from github  
-CLEAN=1 # Whether to clean the build directory before building
-MODEL=lfric_atm 
+CLEAN=0 # Whether to clean the build directory before building
+MODEL=lfric_atm # App to build, i.e. lfric_atm or ghungho_model
+DEPENDENCIES_MODULES_PATH=/work/d435/d435/shared/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
+set -e  # Stop the script if any command fails
 
-set -e 
-
-# Load environment modules and activate spack environment
-module load spack
-spack env activate ../../environments/lfric
-module load cray-python
-spack load lfric-meta@$RELEASE_APPS %gcc
-spack load pfunit
+module use $DEPENDENCIES_MODULES_PATH # Make modules with lfric dependencies available. 
+module -I load lfric-meta-spack-gcc/3.1.1
 module load PrgEnv-gnu
-
 module load cray-hdf5-parallel/1.14.3.5
 module load cray-netcdf-hdf5parallel/4.9.0.17
+module load cray-python
 
 # Enable perftools if CRAYPAT is set
 if [ $CRAYPAT -eq 1 ]; then
@@ -65,10 +61,6 @@ export FC=ftn
 if [ $CLEAN -eq 1 ]; then
     rm -rf $ROOT_DIR/$LFRIC_APPS_DIR/applications/$MODEL/working/
 fi
-
-
-PSYCLONE_DIR=$(spack find -dlp lfric-meta@$RELEASE_APPS | grep psyclone | sed -E "s\.*/work\/work\g") # Get the root directory for py-psyclone from spack
-export PSYCLONE_CONFIG=$PSYCLONE_DIR/share/psyclone/psyclone.cfg
 
 
 VERBOSE=3 python local_build.py -p "meto-azspice" -v  -c ../../$LFRIC_CORE_DIR -o $OPT $MODEL -j 16 2>&1 | tee $ROOT_DIR/build_gcc.log

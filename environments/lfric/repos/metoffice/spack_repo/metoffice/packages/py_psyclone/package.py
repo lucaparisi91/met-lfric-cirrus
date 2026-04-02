@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from curses import version
+import os
 
 from spack_repo.builtin.build_systems.python import PythonPackage
 
@@ -92,3 +93,7 @@ class PyPsyclone(PythonPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Allow testing with installed executables
         env.prepend_path("PATH", self.prefix.bin)
+    
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        
+        env.set("PSYCLONE_CONFIG", os.path.join(self.prefix, "share", "psyclone", "psyclone.cfg"))

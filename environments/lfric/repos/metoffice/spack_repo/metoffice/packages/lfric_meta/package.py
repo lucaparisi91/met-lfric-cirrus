@@ -21,27 +21,27 @@ class LfricMeta(BundlePackage):
     version("3.1.1")
 
     # Dependencies
-    depends_on("mpi")
-    depends_on("hdf5+mpi")
-    depends_on("netcdf-c+mpi")
-    depends_on("netcdf-fortran")
-    depends_on("yaxt")
-    depends_on("py-jinja2")
-    depends_on("py-psyclone@2.5.0", when='@:1.2')
-    depends_on("py-psyclone@3.0.0", when='@2.0')
-    depends_on("py-psyclone@3.1.0", when='@2.1:3.1.0')
-    depends_on("py-psyclone@3.2.2", when='@3.1.1:')
-    depends_on("py-pyyaml",when='@3.0:') 
-    depends_on("rose-picker")
-    depends_on("xios@2701")
-    depends_on("shumlib@13.0+openmp")
+    depends_on("mpi", type="run")
+    depends_on("hdf5+mpi",type = "run")
+    depends_on("netcdf-c+mpi", type="run")
+    depends_on("netcdf-fortran", type="run")
+    depends_on("yaxt", type="run")
+    depends_on("py-jinja2", type="run")
+    depends_on("py-psyclone@2.5.0", when='@:1.2', type="run")
+    depends_on("py-psyclone@3.0.0", when='@2.0', type="run")
+    depends_on("py-psyclone@3.1.0", when='@2.1:3.1.0', type="run")
+    depends_on("py-psyclone@3.2.2", when='@3.1.1:', type="run")
+    depends_on("py-pyyaml",when='@3.0:', type="run") 
+    depends_on("rose-picker", type="run")
+    depends_on("xios@2701", type="run")
+    depends_on("shumlib@13.0+openmp", type="run")
     # depends_on("pfunit@3.2.9")
     
     depends_on("cxx", type='build')
     depends_on("c", type='build')
     depends_on("fortran", type='build')
     
-
+    
     # Set up environment paths
     def setup_run_environment(self, run_env):
         spec = self.spec
