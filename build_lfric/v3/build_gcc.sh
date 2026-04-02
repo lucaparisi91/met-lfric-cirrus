@@ -10,7 +10,7 @@ DEPENDENCIES_MODULES_PATH=/work/d435/d435/shared/lparisid435/met-lfric-cirrus/en
 set -e  # Stop the script if any command fails
 
 module use $DEPENDENCIES_MODULES_PATH # Make modules with lfric dependencies available. 
-module -I load lfric-meta-spack-gcc/3.1.1
+module load lfric-meta-gcc/3.1.1
 module load PrgEnv-gnu
 module load cray-hdf5-parallel/1.14.3.5
 module load cray-netcdf-hdf5parallel/4.9.0.17
