@@ -6,10 +6,10 @@
 spack:
 
   specs:
-    - lfric-meta@2.2 ^xios ^blitz%cce_all ^boost%cce_all %cce_all
-    - lfric-meta@3.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
-    - lfric-meta@3.1.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
-    - lfric-meta@3.1.1 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all
+    - lfric-meta@2.2 ^xios ^blitz%cce_all ^boost%cce_all %cce_all ^py-sympy@1.13.3
+    - lfric-meta@3.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
+    - lfric-meta@3.1.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
+    - lfric-meta@3.1.1 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
     
     
     - pfunit +mpi +openmp %gcc_all
@@ -18,6 +18,7 @@ spack:
     - rose-picker
     - hpctoolkit
     - hpcviewer
+    - heaptrack ^libunwind%gcc_all
   concretizer:
     unify: false
     splice::
@@ -28,7 +29,10 @@ spack:
       padding_length: 120
   repos:
     metoffice: $env/repos/metoffice/spack_repo/metoffice
-  
+  packages:
+    all:
+      prefer:
+        - gcc
   modules:
     default:
       'enable:':
