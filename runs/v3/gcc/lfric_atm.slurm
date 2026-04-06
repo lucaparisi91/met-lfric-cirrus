@@ -11,8 +11,8 @@
 #SBATCH --export=all
 
 
-USE_HEAPTRACK=false # Track memory usage with heaptrack.
-export TRACE_MODEL_SINGLE_CORE=true # Only trace/profile the model on a single core of the model.
+PROFILER="hpctoolkit" # Choose between "heaptrack" and "hpctoolkit" for profiling.
+export TRACE_MODEL_SINGLE_CORE=false # Only trace/profile the model on a single core of the model.
 
 module load PrgEnv-gnu
 module load cray-python
@@ -20,13 +20,17 @@ module use /work/d435/d435/shared/lparisid435/met-lfric-cirrus/environments/lfri
 module load lfric-meta-gcc/3.1.0
 
 # Wrap executable with heaptrack, if doing memory tracking
-if [ "$USE_HEAPTRACK" = true ]; then
+if [ "$PROFILER" = "heaptrack" ]; then
     export LAUNCHER="heaptrack"
     module load heaptrack-gcc
-else 
-    export LAUNCHER=""
+else
+    if [ "$PROFILER" = "hpctoolkit" ]; then
+        export LAUNCHER="hpcrun"
+        module load hpctoolkit-gcc
+    else 
+        export LAUNCHER=""
+    fi
 fi
-
 
 export FI_CXI_RX_MATCH_MODE=hybrid
 #export FI_CXI_OPTIMIZED_MRS=false
@@ -46,4 +50,4 @@ ulimit -c 0 # Do not create core dumps
 
 export OMP_NUM_THREADS=4
 
-srun --mem=0 --nodes=17 --cpus-per-task=4 --ntasks=1176   --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes=4 --ntasks=48 --cpus-per-task=4 --ntasks-per-node=12 --distribution=block:block --hint=nomultithread xios_server.exe
+srun --mem=0 --nodes=17 --cpus-per-task=4 --ntasks=1176   --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes=4 --ntasks=48 --cpus-per-task=4 --ntasks-per-node=12 --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
