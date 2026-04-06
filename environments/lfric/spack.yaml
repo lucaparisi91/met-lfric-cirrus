@@ -52,7 +52,10 @@ spack:
         hide_implicits: true
         all:
           autoload: all
-        
+        heaptrack:
+          autoload: none
+        hpctoolkit:
+          autoload: run
         exclude:
         - cray-mpich
         - cray-libsci
