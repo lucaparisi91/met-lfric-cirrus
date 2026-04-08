@@ -13,6 +13,9 @@ pip install -r requirements.txt
 
 ## Run the workflows
 
+You will need to copy here the templates directory, containing inputfiles and meshes.
+These are too bigs to fit on a repo.
+
 ```bash
 source env.sh
 cylc vip
