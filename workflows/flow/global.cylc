@@ -1,0 +1,25 @@
+[platforms]
+    [[localhost]]
+        hosts = localhost
+        install target = localhost
+        global init-script = """
+            export BENCHMARKS_ROOT=/work/d435/d435/shared/lparisid435/benchmarks
+            export CYLC_RUN_DIR=${BENCHMARKS_ROOT}/runs/cylc-run
+            source ${BENCHMARKS_ROOT}/cylc_env/bin/activate
+            export HOME=${BENCHMARKS_ROOT}/runs
+        """
+    [[cirrus]]
+        hosts = localhost
+        job runner = slurm
+        install target = localhost
+        global init-script = """
+            export BENCHMARKS_ROOT=/work/d435/d435/shared/lparisid435/benchmarks
+            export CYLC_RUN_DIR=${BENCHMARKS_ROOT}/runs/cylc-run
+            source ${BENCHMARKS_ROOT}/cylc_env/bin/activate
+            export HOME=${BENCHMARKS_ROOT}/runs
+        """
+
+[install]
+    [[symlink dirs]]
+        [[[localhost]]]
+            run = ${BENCHMARKS_ROOT}/runs

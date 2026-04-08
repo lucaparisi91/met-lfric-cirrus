@@ -1,0 +1,87 @@
+#!Jinja2
+
+
+[scheduler]
+    allow implicit tasks = True
+
+    {% set experiment_name = "xios2_xios3_comparision" %}
+
+    # Matrix of parameters. A task will be created for each combination of parameters.
+    {% set parameters= {
+        "mesh": ["C48"],
+        "profiler": ["none"],
+        "xiosVersion": ["xios2", "xios3"],
+        "clientNodes": [1],
+        "ioNodes": [0],
+        "stripes": ["-1"],
+        "pool": ["none"]
+        }
+    %}
+
+    # Result directory
+    {%
+        set results_dir = "/work/d435/d435/lparisid435/met-lfric-cirrus/results/"~experiment_name
+    %}
+
+
+    # Machine Parameters
+    {%
+        set coresPerNode = 288
+    %}
+
+    # Number of times to repeat each experiment (to get an estimate of variability)
+    {%
+        set repeats = 1
+    %}
+    
+    {%
+        set darshan_modules="DXT_POSIX,DXT_MPIIO"
+    %}
+
+    {%
+        set pool = "none"
+    %}
+
+    {%
+        set stripes = -1
+    %}
+
+    {% from "expand_combinations" import expand_combinations, get_label %}
+    {% set combinations = expand_combinations(parameters) %}
+
+[scheduling]
+    [[queues]]
+        [[[default]]]
+            limit = 3
+    [[graph]]
+
+
+        {% for combination in combinations %}
+        R1= """
+            lfric_atm_{{get_label(combination)}}
+        """
+        {% endfor %}
+
+[runtime]
+
+    
+            {% for combination in combinations %}
+                
+                [[ lfric_atm_{{ get_label(combination) }} ]]
+                    platform = cirrus
+                    script = """
+
+                            echo $(hostname)
+                            
+                            """
+                    [[[directives]]]
+                        --nodes = {{ combination.ioNodes + combination.clientNodes }}
+                        --ntasks-per-node = 1
+                        --cpus-per-task = 1
+                        --time = 00:20:00
+                        --partition = standard
+                        --account = d435
+                        --qos = short
+                        --exclusive = 
+    {%endfor %}                    
+    
