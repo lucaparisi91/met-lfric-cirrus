@@ -4,17 +4,20 @@
 [scheduler]
     allow implicit tasks = True
 
-    {% set experiment_name = "xios2_xios3_comparision" %}
 
+    ########## INPUT PARAMETERS ############
+    
+    {% set experiment_name = "xios2_xios3_comparision" %}
+    
     # Matrix of parameters. A task will be created for each combination of parameters.
     {% set parameters= {
         "mesh": ["C48"],
         "profiler": ["none"],
-        "xiosVersion": ["xios2", "xios3"],
+        "xiosVersion": ["xios2"],
         "clientNodes": [1],
-        "ioNodes": [0],
+        "ioNodes": [1],
         "stripes": ["-1"],
-        "pool": ["none"]
+        "profiler": [""]
         }
     %}
 
@@ -42,9 +45,14 @@
         set pool = "none"
     %}
 
-    {%
-        set stripes = -1
+    {% 
+        set dependencies_modules_path = "/mnt/lustre/e1000/home/d435/d435/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core"
     %}
+
+
+    ########## WORKFLOW DEFINITIONS ############
+
+
 
     {% from "expand_combinations" import expand_combinations, get_label %}
     {% set combinations = expand_combinations(parameters) %}
@@ -54,29 +62,85 @@
         [[[default]]]
             limit = 3
     [[graph]]
-
-
+        
         {% for combination in combinations %}
         R1= """
-            lfric_atm_{{get_label(combination)}}
+            setup_lfric_atm_{{get_label(combination)}} => run_lfric_atm_{{get_label(combination)}}
         """
+        
         {% endfor %}
 
 [runtime]
-
     
             {% for combination in combinations %}
-                
-                [[ lfric_atm_{{ get_label(combination) }} ]]
+                [[ setup_lfric_atm_{{ get_label(combination) }} ]]
+                    platform = localhost
+                    script = """
+                            
+                            # Working directory for the job
+                            WORKDIR=$CYLC_WORKFLOW_SHARE_DIR/lfric_atm_{{ get_label(combination) }}
+                            mkdir -p $WORKDIR
+
+                            # Copy all input files to the run directory
+                            cp -r ${CYLC_WORKFLOW_RUN_DIR}/templates/{{combination.mesh}}/* $WORKDIR
+
+                            # Create the results directory for this job and set strips
+                            mkdir -p $WORKDIR/results
+                            if [ "{{ combination.stripes }}" != "none" ]; then
+                                lfs setstripe -c {{ combination.stripes }} $WORKDIR/results
+                            fi
+
+                            """
+                [[ run_lfric_atm_{{ get_label(combination) }} ]]
                     platform = cirrus
                     script = """
+                            PROFILER="{{ combination.profiler }}" # Choose between "heaptrack" , "hpctoolkit" for profiling and "" for no profiling.
+                            export TRACE_MODEL_SINGLE_CORE=false # Only trace/profile the model on a single core of the model.
+                            XIOS="{{ combination.xiosVersion }}" # XIOS version to run with. Allowed values are xios2 and xios3
 
-                            echo $(hostname)
+                            module load PrgEnv-gnu
+                            module load cray-python
+                            module use {{ dependencies_modules_path }}
+                            module -I load lfric-meta-gcc-${XIOS}/3.1.1
+
+                            # Wrap executable with heaptrack, if doing memory tracking
+                            if [ "$PROFILER" = "heaptrack" ]; then
+                                export LAUNCHER="heaptrack"
+                                module load heaptrack-gcc
+                            else
+                                if [ "$PROFILER" = "hpctoolkit" ]; then
+                                    export LAUNCHER="hpcrun"
+                                    module load hpctoolkit-gcc
+                                else 
+                                    export LAUNCHER=""
+                                fi
+                            fi
+
+                            # Libfabric env variables for Slingshot-11
+                            export FI_CXI_RX_MATCH_MODE=hybrid
+                            #export FI_CXI_OPTIMIZED_MRS=false
+                            export FI_CXI_DEFAULT_CQ_SIZE=1048576
+                            export SRUN_CPUS_PER_TASK=1
+                            export OMP_PLACES=cores
+                            export LFRIC_ATM_EXEC=/work/d435/d435/lparisid435/met-lfric-cirrus/build_lfric/v3/lfric_apps_fast-debug_3.1.1_${XIOS}/applications/lfric_atm/bin/lfric_atm
+
+                            unset SLURM_NTASKS
+                            unset SLURM_TASKS_PER_NODE
+                            unset unset SLURM_TASKS_PER_NODE
+                            unset SLURM_NPROCS
+                            module load xthi
+
+                            ulimit -c 0 # Do not create core dumps
+
+                            WORKDIR=$CYLC_WORKFLOW_SHARE_DIR/lfric_atm_{{ get_label(combination) }}
+                            cd $WORKDIR
+
+                            srun --mem=0 --nodes={{combination.clientNodes}} --cpus-per-task=1 --ntasks=24  --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes={{ combination.ioNodes }} --ntasks=4 --cpus-per-task=4 --ntasks-per-node=4 --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
                             
                             """
                     [[[directives]]]
                         --nodes = {{ combination.ioNodes + combination.clientNodes }}
-                        --ntasks-per-node = 1
+                        --ntasks-per-node = {{ coresPerNode }}
                         --cpus-per-task = 1
                         --time = 00:20:00
                         --partition = standard
