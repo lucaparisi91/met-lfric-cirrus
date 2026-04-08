@@ -20,7 +20,7 @@
         "profiler": [""]
         }
     %}
-
+    
     # Result directory
     {%
         set results_dir = "/work/d435/d435/lparisid435/met-lfric-cirrus/results/"~experiment_name
@@ -65,9 +65,9 @@
         
         {% for combination in combinations %}
         R1= """
-            setup_lfric_atm_{{get_label(combination)}} => run_lfric_atm_{{get_label(combination)}}
+            setup_lfric_atm_{{get_label(combination)}} => run_lfric_atm_{{get_label(combination)}} => cleanup_lfric_atm_{{get_label(combination)}}
         """
-        
+
         {% endfor %}
 
 [runtime]
@@ -147,5 +147,18 @@
                         --account = d435
                         --qos = short
                         --exclusive = 
+                
+                [[ cleanup_lfric_atm_{{ get_label(combination) }} ]]
+                    platform = localhost
+                    script = """
+                            
+                            # Working directory for the job
+                            WORKDIR=$CYLC_WORKFLOW_SHARE_DIR/lfric_atm_{{ get_label(combination) }}
+                            
+                            # Remove large output files to save disk space
+                            rm -r $WORKDIR/results/*.nc
+
+                            """    
+                
     {%endfor %}                    
     
