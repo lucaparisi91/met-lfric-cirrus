@@ -5,7 +5,8 @@ RELEASE_APPS=3.1.1 # LFRic release to checkout from github
 RELEASE_CORE=3.1 # LFRic release to checkout from github  
 CLEAN=1 # Whether to clean the build directory before building
 MODEL=lfric_atm # App to build, i.e. lfric_atm or ghungho_model
-DEPENDENCIES_MODULES_PATH=/work/d435/d435/shared/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
+XIOS="xios3" # XIOS version to build with. Allowed values are xios2 and xios3 
+DEPENDENCIES_MODULES_PATH=/mnt/lustre/e1000/home/d435/d435/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
 export RDEF_PRECISION="32" # ? 
 export R_TRAN_PRECISION="32"  # Transport scheme precision ?
 export R_BL_PRECISION="32" # Boundary layer scheme precision ?
@@ -18,7 +19,7 @@ set -e  # Stop the script if any command fails
 
 
 module use $DEPENDENCIES_MODULES_PATH # Make modules with lfric dependencies available. 
-module -I load lfric-meta-gcc/3.1.1
+module -I load lfric-meta-gcc-$XIOS/3.1.1
 module load PrgEnv-gnu
 module load cray-hdf5-parallel/1.14.3.5
 module load cray-netcdf-hdf5parallel/4.9.0.17
@@ -34,9 +35,8 @@ set -x
 
 ROOT_DIR=$(pwd)
 
-LFRIC_APPS_DIR=lfric_apps_${OPT}_${RELEASE_APPS}
-LFRIC_CORE_DIR=lfric_core_${OPT}_${RELEASE_CORE}
-
+LFRIC_APPS_DIR=lfric_apps_${OPT}_${RELEASE_APPS}_${XIOS}
+LFRIC_CORE_DIR=lfric_core_${OPT}_${RELEASE_CORE}_${XIOS}
 
 # Add _craypat to directory names if CrayPat is enabled
 if [ $CRAYPAT -eq 1 ]; then

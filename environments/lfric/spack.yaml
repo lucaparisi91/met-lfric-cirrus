@@ -6,19 +6,24 @@
 spack:
 
   specs:
-    - lfric-meta@2.2 ^xios ^blitz%cce_all ^boost%cce_all %cce_all ^py-sympy@1.13.3
-    - lfric-meta@3.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
-    - lfric-meta@3.1.0 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
-    - lfric-meta@3.1.1 ^xios ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
+    # - lfric-meta@2.2 ^xios@2701 ^blitz%cce_all ^boost%cce_all %cce_all ^py-sympy@1.13.3
+    # - lfric-meta@3.0 ^xios@2701 ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
+    - lfric-meta@3.1.1 +xios +vernier ^xios@2701 %gcc_all
+    - lfric-meta@3.1.1 +xios +vernier ^xios@3.0.2.2 %gcc_all
+    - hpctoolkit@2024.01.1 %gcc_all
+    - hpcviewer %gcc_all
+    - darshan-util %gcc_all  
+    - darshan-runtime %gcc_all
+    - heaptrack %gcc_all
+    # - pfunit +mpi +openmp %gcc_all
+    # # - pfunit +mpi +openmp %cce_all
+    # - fcm %gcc ^perl-tk cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int" ^apr cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int"
+    # - rose-picker
+    # - hpctoolkit
+    # - hpcviewer
+    # - heaptrack ^libunwind%gcc_all
+
     
-    
-    - pfunit +mpi +openmp %gcc_all
-    # - pfunit +mpi +openmp %cce_all
-    - fcm %gcc ^perl-tk cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int" ^apr cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int"
-    - rose-picker
-    - hpctoolkit
-    - hpcviewer
-    - heaptrack ^libunwind%gcc_all
   concretizer:
     unify: false
     splice::
@@ -29,10 +34,7 @@ spack:
       padding_length: 120
   repos:
     metoffice: $env/repos/metoffice/spack_repo/metoffice
-  packages:
-    all:
-      prefer:
-        - gcc
+  
   modules:
     default:
       'enable:':
@@ -42,20 +44,20 @@ spack:
       lmod:
         projections:
           all: '{name}/{version}' 
+          'lfric-meta +xios  ^xios@3 %gcc' : '{name}-gcc-xios3/{version}'
+          'lfric-meta +xios  ^xios@2701 %gcc' : '{name}-gcc-xios2/{version}'
           '%cce': '{name}-cce/{version}'
           '%gcc': '{name}-gcc/{version}'
-        
+
         hash_length: 0
         hierarchy:: [] # Disable using mpi hierarchy
         core_compilers: [gcc,cce,intel-oneapi-compilers] # Disable using compiler hierarchy
 
         hide_implicits: true
         all:
-          autoload: all
+          autoload: run
         heaptrack:
           autoload: none
-        hpctoolkit:
-          autoload: run
         exclude:
         - cray-mpich
         - cray-libsci
@@ -80,3 +82,40 @@ spack:
           - CPATH
     
   view: false
+
+  packages:
+    all:
+      prefer:
+        - gcc
+    gcc::
+      externals:
+        - spec: gcc@=14.2
+          extra_attributes:
+            compilers:
+              c: cc
+              cxx: CC
+              fortran: ftn
+            flags:
+              cflags: "-Wno-error=incompatible-pointer-types -Wno-error=implicit-int -Wno-error=implicit-function-declaration -Wno-error=changes-meaning"
+              cxxflags: "-Wno-error=changes-meaning"
+          modules:
+            - cpe/25.03
+            - PrgEnv-gnu/8.6.0
+            - gcc-native/14.2
+            - xpmem/0.2.119-1.3_gef379be13330
+            - craype-x86-turin
+            - craype-network-ofi
+            - libfabric/1.22.0
+            - craype-x86-turin
+          
+          extra_rpaths:
+              - /opt/cray/libfabric/1.22.0/lib64/
+              - /opt/xpmem/lib64/
+
+        
+        - spec: gcc@=14.2.1
+          extra_attributes:
+            compilers:
+              c: /opt/rh/gcc-toolset-14/root/usr/bin/gcc
+              cxx: /opt/rh/gcc-toolset-14/root/usr/bin/g++
+              fortran: /opt/rh/gcc-toolset-14/root/usr/bin/gfortran

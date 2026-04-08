@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from marshal import version
 import os
 import textwrap
 
@@ -18,6 +19,7 @@ class Xios(Package):
 
         # equivalent sha to legacy svn revision 2701
     version("2701",commit="2eb572f0986eca19031eb6c294d116646010687c")
+    version("3.0.2.2", branch="xios-3.0.2.2")
     version("3.0.1.0", commit="xios-3.0.1.0")
     
     variant("oasis", default=False, description="enable OASIS support")

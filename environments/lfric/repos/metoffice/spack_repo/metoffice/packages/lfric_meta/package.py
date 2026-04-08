@@ -20,7 +20,13 @@ class LfricMeta(BundlePackage):
     version("3.1.0")
     version("3.1.1")
 
-    # Dependencies
+    variant("xios", default=True, description="Whether to build with xios support")
+    variant("vernier", default=False, description="Whether to build with vernier support",when="@1:2")
+    variant("vernier", default=True, description="Whether to build with vernier support",when="@3:")
+    
+    
+
+    # # Dependencies
     depends_on("mpi", type="run")
     depends_on("hdf5+mpi",type = "run")
     depends_on("netcdf-c+mpi", type="run")
@@ -33,15 +39,18 @@ class LfricMeta(BundlePackage):
     depends_on("py-psyclone@3.2.2", when='@3.1.1:', type="run")
     depends_on("py-pyyaml",when='@3.0:', type="run") 
     depends_on("rose-picker", type="run")
-    depends_on("xios@2701", type="run")
+
+
+    depends_on("xios", type="run",when="+xios")
+    depends_on("vernier", type="run",when="+vernier")
     depends_on("shumlib@13.0+openmp", type="run")
-    # depends_on("pfunit@3.2.9")
+    #depends_on("pfunit@3.2.9")
     
     depends_on("cxx", type='build')
     depends_on("c", type='build')
     depends_on("fortran", type='build')
-    
-    
+
+
     # Set up environment paths
     def setup_run_environment(self, run_env):
         spec = self.spec
@@ -50,3 +59,13 @@ class LfricMeta(BundlePackage):
         run_env.set("FC", "ftn")
         run_env.set("LDMPI", "ftn")
         run_env.set("FPP", "cpp -traditional-cpp")
+        
+        if "vernier" in spec:
+            run_env.set("USE_VERNIER", "true")
+            run_env.set("USE_TIMING_WRAPPER", "true")
+
+        else: # Use legacy timer if vernier is not enabled
+            run_env.set("USE_LEGACY_TIMER", "true")
+            run_env.set("USE_TIMING_WRAPPER", "true")
+
+
