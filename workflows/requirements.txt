@@ -2,3 +2,4 @@ cylc-flow
 pandas
 seaborn
 matplotlib
+cylc-uiserver[hub]

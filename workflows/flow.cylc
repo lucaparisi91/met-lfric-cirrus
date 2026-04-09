@@ -2,8 +2,9 @@
 
 
 [scheduler]
-    allow implicit tasks = True
 
+        
+    allow implicit tasks = True
 
     ########## INPUT PARAMETERS ############
     
@@ -11,13 +12,15 @@
     
     # Matrix of parameters. A task will be created for each combination of parameters.
     {% set parameters= {
-        "mesh": ["C48"],
-        "profiler": ["none"],
+        "mesh": ["C896"],
+        "profiler": [""],
         "xiosVersion": ["xios2"],
-        "clientNodes": [1],
-        "ioNodes": [1],
+        "clientNodes": [17],
+        "ioNodes": [4],
         "stripes": ["-1"],
-        "profiler": [""]
+        "profiler": [""],
+        "clientTasks": [1176],
+        "ioTasks": [48]
         }
     %}
     
@@ -34,7 +37,7 @@
 
     # Number of times to repeat each experiment (to get an estimate of variability)
     {%
-        set repeats = 1
+        set repeats = 2
     %}
     
     {%
@@ -51,27 +54,38 @@
 
 
     ########## WORKFLOW DEFINITIONS ############
+    [[events]]
+        stall timeout = PT1H30M
 
 
-
-    {% from "expand_combinations" import expand_combinations, get_label %}
-    {% set combinations = expand_combinations(parameters) %}
+    {% from "parameters" import expand_combinations, get_label %}
+    {% set combinations = expand_combinations(parameters, repeats) %}
 
 [scheduling]
     [[queues]]
-        [[[default]]]
-            limit = 3
+        # Allow only one benchmark to run at the same time, to avoid interference between jobs.
+        [[[run_benchmark_queue]]]
+            limit = 1
+            members = RUN_BENCHMARK
     [[graph]]
         
         {% for combination in combinations %}
         R1= """
             setup_lfric_atm_{{get_label(combination)}} => run_lfric_atm_{{get_label(combination)}} => cleanup_lfric_atm_{{get_label(combination)}}
+            
+            # If using hpctoolkit, analyse the results
+            {% if combination.profiler == "hpctoolkit" %}
+                run_lfric_atm_{{get_label(combination)}} => anal_hpctoolkit_lfric_atm_{{get_label(combination)}}
+            {% endif %}
         """
 
         {% endfor %}
 
 [runtime]
-    
+
+            # Group tasks that run the benchmark, to separate them from setup and cleanup tasks.
+                [[ RUN_BENCHMARK]]
+
             {% for combination in combinations %}
                 [[ setup_lfric_atm_{{ get_label(combination) }} ]]
                     platform = localhost
@@ -82,7 +96,7 @@
                             mkdir -p $WORKDIR
 
                             # Copy all input files to the run directory
-                            cp -r ${CYLC_WORKFLOW_RUN_DIR}/templates/{{combination.mesh}}/* $WORKDIR
+                            cp -r ${CYLC_WORKFLOW_RUN_DIR}/templates/{{combination.mesh}}_{{combination.xiosVersion}}/* $WORKDIR
 
                             # Create the results directory for this job and set strips
                             mkdir -p $WORKDIR/results
@@ -93,9 +107,10 @@
                             """
                 [[ run_lfric_atm_{{ get_label(combination) }} ]]
                     platform = cirrus
+                    inherit = RUN_BENCHMARK
                     script = """
                             PROFILER="{{ combination.profiler }}" # Choose between "heaptrack" , "hpctoolkit" for profiling and "" for no profiling.
-                            export TRACE_MODEL_SINGLE_CORE=false # Only trace/profile the model on a single core of the model.
+                            export TRACE_MODEL_SINGLE_CORE=0 # Only trace/profile the model on a single core of the model.
                             XIOS="{{ combination.xiosVersion }}" # XIOS version to run with. Allowed values are xios2 and xios3
 
                             module load PrgEnv-gnu
@@ -109,7 +124,7 @@
                                 module load heaptrack-gcc
                             else
                                 if [ "$PROFILER" = "hpctoolkit" ]; then
-                                    export LAUNCHER="hpcrun"
+                                    export LAUNCHER="hpcrun -o hpctoolkit-lfric_atm-xios_server"
                                     module load hpctoolkit-gcc
                                 else 
                                     export LAUNCHER=""
@@ -126,7 +141,7 @@
 
                             unset SLURM_NTASKS
                             unset SLURM_TASKS_PER_NODE
-                            unset unset SLURM_TASKS_PER_NODE
+                            unset SLURM_TASKS_PER_NODE
                             unset SLURM_NPROCS
                             module load xthi
 
@@ -135,17 +150,19 @@
                             WORKDIR=$CYLC_WORKFLOW_SHARE_DIR/lfric_atm_{{ get_label(combination) }}
                             cd $WORKDIR
 
-                            srun --mem=0 --nodes={{combination.clientNodes}} --cpus-per-task=1 --ntasks=24  --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes={{ combination.ioNodes }} --ntasks=4 --cpus-per-task=4 --ntasks-per-node=4 --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
+                            
+
+                            srun --mem=0 --nodes={{combination.clientNodes}} --cpus-per-task=1 --ntasks={{combination.clientTasks}}  --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes={{ combination.ioNodes }} --ntasks={{ combination.ioTasks }} --cpus-per-task={{ (coresPerNode/(combination.ioTasks/combination.ioNodes)) | int }} --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
                             
                             """
                     [[[directives]]]
                         --nodes = {{ combination.ioNodes + combination.clientNodes }}
                         --ntasks-per-node = {{ coresPerNode }}
                         --cpus-per-task = 1
-                        --time = 00:20:00
+                        --time = 00:30:00
                         --partition = standard
                         --account = d435
-                        --qos = short
+                        --qos = standard
                         --exclusive = 
                 
                 [[ cleanup_lfric_atm_{{ get_label(combination) }} ]]
@@ -159,6 +176,34 @@
                             rm -r $WORKDIR/results/*.nc
 
                             """    
-                
+                [[ anal_hpctoolkit_lfric_atm_{{ get_label(combination) }} ]]
+                    platform = cirrus
+                    script = """
+                            
+                            # Working directory for the job
+                            WORKDIR=$CYLC_WORKFLOW_SHARE_DIR/lfric_atm_{{ get_label(combination) }}
+                            
+                            cd $WORKDIR
+                            module load PrgEnv-gnu
+                            module load cray-python
+                            module use {{ dependencies_modules_path }}
+                            module -I load hpctoolkit-gcc
+
+                            date
+                            hpcstruct hpctoolkit-lfric_atm-xios_server
+                            date
+                            hpcprof hpctoolkit-lfric_atm-xios_server
+                            date                        
+                            """
+                     [[[directives]]]
+                        --nodes = {{ 1 }}
+                        --ntasks-per-node = {{ coresPerNode }}
+                        --cpus-per-task = 1
+                        --time = 00:20:00
+                        --partition = standard
+                        --account = d435
+                        --qos = short
+                        --exclusive = 
+
     {%endfor %}                    
     
