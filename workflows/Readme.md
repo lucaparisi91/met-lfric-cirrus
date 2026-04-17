@@ -20,3 +20,14 @@ These are too bigs to fit on a repo.
 source env.sh
 cylc vip
 ```
+
+## Analyse the data
+
+Use the `collect` python module to collect data from a volder. For example to collect vernier timings use
+
+```bash
+source env.sh
+python -m collect --vernier /work/d435/d435/shared/lparisid435/benchmarks/runs/cylc-run/workflows/runN/share
+```
+
+to collect cylc outputs in the `/work/d435/d435/shared/lparisid435/benchmarks/runs/cylc-run/workflows/runN/share` folder.

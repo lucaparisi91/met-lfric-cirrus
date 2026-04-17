@@ -14,7 +14,7 @@
     {% set parameters= {
         "mesh": ["C896"],
         "profiler": [""],
-        "xiosVersion": ["xios2"],
+        "xiosVersion": ["xios3","xios2"],
         "clientNodes": [17],
         "ioNodes": [4],
         "stripes": ["-1"],
@@ -37,7 +37,7 @@
 
     # Number of times to repeat each experiment (to get an estimate of variability)
     {%
-        set repeats = 2
+        set repeats = 5
     %}
     
     {%
@@ -150,9 +150,7 @@
                             WORKDIR=$CYLC_WORKFLOW_SHARE_DIR/lfric_atm_{{ get_label(combination) }}
                             cd $WORKDIR
 
-                            
-
-                            srun --mem=0 --nodes={{combination.clientNodes}} --cpus-per-task=1 --ntasks={{combination.clientTasks}}  --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes={{ combination.ioNodes }} --ntasks={{ combination.ioTasks }} --cpus-per-task={{ (coresPerNode/(combination.ioTasks/combination.ioNodes)) | int }} --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
+                            srun --mem=0 --nodes={{combination.clientNodes}} --cpus-per-task=4 --ntasks={{combination.clientTasks}} --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes={{ combination.ioNodes }} --ntasks={{ combination.ioTasks }} --cpus-per-task={{ (coresPerNode/(combination.ioTasks/combination.ioNodes)) | int }} --ntasks-per-node={{(combination.ioTasks/combination.ioNodes) | int}}        --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
                             
                             """
                     [[[directives]]]
