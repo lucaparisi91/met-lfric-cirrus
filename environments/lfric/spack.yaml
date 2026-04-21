@@ -10,6 +10,9 @@ spack:
     # - lfric-meta@3.0 ^xios@2701 ^blitz%gcc_all ^boost%gcc_all %gcc_all ^py-sympy@1.13.3
     - lfric-meta@3.1.1 +xios +vernier ^xios@2701 %gcc_all
     - lfric-meta@3.1.1 +xios +vernier ^xios@3.0.2.2 %gcc_all
+    - lfric-meta@3.1.1 ~xios +vernier %gcc_all
+    
+    
     - hpctoolkit@2024.01.1 %gcc_all
     - hpcviewer %gcc_all
     - darshan-util %gcc_all  
@@ -46,6 +49,8 @@ spack:
           all: '{name}/{version}' 
           'lfric-meta +xios  ^xios@3 %gcc' : '{name}-gcc-xios3/{version}'
           'lfric-meta +xios  ^xios@2701 %gcc' : '{name}-gcc-xios2/{version}'
+          'lfric-meta ~xios %gcc' : '{name}-gcc-no-xios/{version}'
+          
           '%cce': '{name}-cce/{version}'
           '%gcc': '{name}-gcc/{version}'
 
