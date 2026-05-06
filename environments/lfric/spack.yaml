@@ -11,13 +11,12 @@ spack:
     - lfric-meta@3.1.1 +xios +vernier ^xios@2701 %gcc_all
     - lfric-meta@3.1.1 +xios +vernier ^xios@3.0.2.2 %gcc_all
     - lfric-meta@3.1.1 ~xios +vernier %gcc_all
-    
-    
     - hpctoolkit@2024.01.1 %gcc_all
     - hpcviewer %gcc_all
-    - darshan-util %gcc_all  
-    - darshan-runtime %gcc_all
+    - darshan-util@3.5.0 %gcc_all  
+    - darshan-runtime@3.5.0 +mpi +lustre +hdf5 scheduler=slurm %gcc_all
     - heaptrack %gcc_all
+    - rclone %gcc_all
     # - pfunit +mpi +openmp %gcc_all
     # # - pfunit +mpi +openmp %cce_all
     # - fcm %gcc ^perl-tk cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int" ^apr cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int"
@@ -124,3 +123,10 @@ spack:
               c: /opt/rh/gcc-toolset-14/root/usr/bin/gcc
               cxx: /opt/rh/gcc-toolset-14/root/usr/bin/g++
               fortran: /opt/rh/gcc-toolset-14/root/usr/bin/gfortran
+    lustre:
+      externals:
+        - spec: lustre@2.15.5.2
+          prefix: /usr
+                    
+
+        

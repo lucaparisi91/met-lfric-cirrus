@@ -34,4 +34,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     data=collect(args.root_folder, vernier=args.vernier)
-    data.to_csv(sys.stdout, sep=' ')
+    data.to_csv(sys.stdout, sep=' ',index=False)

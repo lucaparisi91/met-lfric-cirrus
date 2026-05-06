@@ -1,0 +1,11 @@
+parameters:
+  
+  mesh: ["C896"]
+  profiler: [""]
+  xiosVersion: ["xios3","xios2"]
+  clientNodes: [17]
+  ioNodes: [4]
+  stripes: ["-1"]
+  profiler: [""]
+  clientTasks: [1176]
+  ioTasks: [48]
