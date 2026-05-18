@@ -1,11 +1,14 @@
+set -e # Stop the script if any command fails
+set -x # Print each command before executing it for easier debugging
+
 OPT=fast-debug # Optimisiation level to pass to ghungho_model: debug, fast-debug, production
-CRAYPAT=0 # Wether to instrument the execuatable with Craypat
+CRAYPAT=1 # Wether to instrument the execuatable with Craypat
 DOWNLOAD=0 # Whether to download the model code from code.metoffice.gov.uk
 RELEASE_APPS=3.1.1 # LFRic release to checkout from github
 RELEASE_CORE=3.1 # LFRic release to checkout from github  
 CLEAN=1 # Whether to clean the build directory before building
 MODEL=lfric_atm # App to build, i.e. lfric_atm or ghungho_model
-XIOS="xios3" # XIOS version to build with. Allowed values are xios2 and xios3 
+XIOS="xios2" # XIOS version to build with. Allowed values are xios2 and xios3 
 DEPENDENCIES_MODULES_PATH=/mnt/lustre/e1000/home/d435/d435/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
 export RDEF_PRECISION="32" # ? 
 export R_TRAN_PRECISION="32"  # Transport scheme precision ?
@@ -13,13 +16,11 @@ export R_BL_PRECISION="32" # Boundary layer scheme precision ?
 export R_SOLVER_PRECISION="32" # Precision of the solver
 export R_PHYS_PRECISION="32" # Precision of physics scheme
 
-set -e  # Stop the script if any command fails
-
-
+set +x  # Disable command echoing to limit noise from module loading
 
 
 module use $DEPENDENCIES_MODULES_PATH # Make modules with lfric dependencies available. 
-module -I load lfric-meta-gcc-$XIOS/3.1.1
+module -I load lfric-meta-gcc-no-xios/3.1.1
 module load PrgEnv-gnu
 module load cray-hdf5-parallel/1.14.3.5
 module load cray-netcdf-hdf5parallel/4.9.0.17
@@ -31,7 +32,7 @@ if [ $CRAYPAT -eq 1 ]; then
     module load perftools
 fi
 
-set -x
+set -x # Re-enable command echoing after loading modules
 
 ROOT_DIR=$(pwd)
 
@@ -40,8 +41,8 @@ LFRIC_CORE_DIR=lfric_core_${OPT}_${RELEASE_CORE}_${XIOS}
 
 # Add _craypat to directory names if CrayPat is enabled
 if [ $CRAYPAT -eq 1 ]; then
-    LFRIC_APPS_DIR=${LFRIC_APPS_DIR}_craypat
-    LFRIC_CORE_DIR=${LFRIC_CORE_DIR}_craypat
+    LFRIC_APPS_DIR=${LFRIC_APPS_DIR}
+    LFRIC_CORE_DIR=${LFRIC_CORE_DIR}
 fi
 
 # --- Download the model code if enabled ---
@@ -53,9 +54,10 @@ if [ $DOWNLOAD -eq 1 ]; then
     
 fi
 
-# export FFLAGS="-I $XIOS_ROOT/inc -I /software/projects/pawsey0835/ddeeptimahanti/setonix/2025.08/software/linux-sles15-zen3/gcc-14.2.0/yaxt-0.11.3-vxxancnxeqjvwc5nx7zm4kyw6b3f56bu/include/"
-# export LIBRARY_PATH=$XIOS_ROOT/lib:$LIBRARY_PATH
-# export LDFLAGS="-L $XIOS_ROOT/lib -I $XIOS_ROOT/inc -Wl,-rpath=$XIOS_ROOT/lib "
+XIOS_ROOT="/work/d435/d435/lparisid435/met-lfric-cirrus/build_lfric/xios/$XIOS"
+export FFLAGS="-I $XIOS_ROOT/inc $FFLAGS"
+export LIBRARY_PATH=$XIOS_ROOT/lib:$LIBRARY_PATH
+export LDFLAGS="-L $XIOS_ROOT/lib -I $XIOS_ROOT/inc -Wl,-rpath=$XIOS_ROOT/lib $LDFLAGS"
 
 cd $LFRIC_APPS_DIR/build
 export CRAY_ENVIRONMENT=TRUE
@@ -81,6 +83,5 @@ if [ $CRAYPAT -eq 1 ]; then
     pat_build $MODEL -o ${MODEL}+pat+sampling
     pat_build -g mpi $MODEL -o ${MODEL}+pat+mpi
     pat_build -g omp $MODEL -o ${MODEL}+pat+omp
-    
     
 fi
