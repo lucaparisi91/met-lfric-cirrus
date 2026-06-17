@@ -10,16 +10,21 @@
 #SBATCH --hint=nomultithread    
 #SBATCH --export=all
 
-PROFILER="hpctoolkit" # Choose between "heaptrack" , "hpctoolkit" for profiling and "" for no profiling.
+PROFILER="" # Choose between "heaptrack" , "hpctoolkit","craypat" for profiling and "" for no profiling.
 export TRACE_MODEL_SINGLE_CORE=false # Only trace/profile the model on a single core of the model.
 DEPENDENCIES_MODULES_PATH=/mnt/lustre/e1000/home/d435/d435/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
 XIOS="xios3" # XIOS version to run with. Allowed values are xios2 and xios3
+
+XIOS_ROOT="/work/d435/d435/lparisid435/met-lfric-cirrus/build_lfric/xios/$XIOS"
+
+XIOS_EXEC=$XIOS_ROOT/bin/xios_server.exe
+CRAYPAT=1
 
 
 module load PrgEnv-gnu
 module load cray-python
 module use $DEPENDENCIES_MODULES_PATH
-module -I load lfric-meta-gcc-${XIOS}/3.1.1
+module -I load lfric-meta-gcc-no-xios/3.1.1
 
 # Wrap executable with heaptrack, if doing memory tracking
 if [ "$PROFILER" = "heaptrack" ]; then
@@ -50,5 +55,10 @@ module load xthi
 
 ulimit -c 0 # Do not create core dumps
 
+if [ "$PROFILER" = "craypat" ]; then
+    export XIOS_EXEC="${XIOS_EXEC}+pat+mpi"
+    LFRIC_ATM_EXEC="${LFRIC_ATM_EXEC}+pat+mpi"
 
-srun --mem=0 --nodes=1 --cpus-per-task=1 --ntasks=24  --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes=1 --ntasks=4 --cpus-per-task=4 --ntasks-per-node=4 --distribution=block:block --hint=nomultithread $LAUNCHER xios_server.exe
+fi
+
+srun --mem=0 --nodes=1 --cpus-per-task=1 --ntasks=24  --hint=nomultithread  --distribution=block:block ./lfric_wrapper.sh  : --mem=0 --nodes=1 --ntasks=4 --cpus-per-task=4 --ntasks-per-node=4 --distribution=block:block --hint=nomultithread $LAUNCHER $XIOS_EXEC
