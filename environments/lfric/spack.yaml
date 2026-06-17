@@ -17,7 +17,7 @@ spack:
     - darshan-runtime@3.5.0 +mpi +lustre +hdf5 scheduler=slurm %gcc_all
     - heaptrack %gcc_all
     - rclone %gcc_all
-    # - pfunit +mpi +openmp %gcc_all
+
     # # - pfunit +mpi +openmp %cce_all
     # - fcm %gcc ^perl-tk cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int" ^apr cflags="-Wno-error=incompatible-pointer-types -Wno-error=implicit-int"
     # - rose-picker

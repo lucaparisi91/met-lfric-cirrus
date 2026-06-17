@@ -24,7 +24,6 @@ class LfricMeta(BundlePackage):
     variant("vernier", default=False, description="Whether to build with vernier support",when="@1:2")
     variant("vernier", default=True, description="Whether to build with vernier support",when="@3:")
     
-    
 
     # # Dependencies
     depends_on("mpi", type="run")
@@ -44,7 +43,10 @@ class LfricMeta(BundlePackage):
     depends_on("xios", type="run",when="+xios")
     depends_on("vernier", type="run",when="+vernier")
     depends_on("shumlib@13.0+openmp", type="run")
-    #depends_on("pfunit@3.2.9")
+    depends_on("pfunit@4.12.0 +mpi +openmp", type="run")
+    depends_on("fargparse", type="run")
+    depends_on("gftl-shared", type="run")
+
     
     depends_on("cxx", type='build')
     depends_on("c", type='build')
