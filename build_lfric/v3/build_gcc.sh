@@ -3,24 +3,23 @@ set -x # Print each command before executing it for easier debugging
 
 OPT=fast-debug # Optimisiation level to pass to ghungho_model: debug, fast-debug, production
 CRAYPAT=1 # Wether to instrument the execuatable with Craypat
-DOWNLOAD=0 # Whether to download the model code from code.metoffice.gov.uk
-RELEASE_APPS=3.1.1 # LFRic release to checkout from github
-RELEASE_CORE=3.1 # LFRic release to checkout from github  
-CLEAN=1 # Whether to clean the build directory before building
-MODEL=lfric_atm # App to build, i.e. lfric_atm or ghungho_model
-XIOS="xios2" # XIOS version to build with. Allowed values are xios2 and xios3 
-DEPENDENCIES_MODULES_PATH=/mnt/lustre/e1000/home/d435/d435/lparisid435/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
+DOWNLOAD=1 # Whether to download the model code from code.metoffice.gov.uk
+RELEASE_APPS=3.2 # LFRic release to checkout from github
+RELEASE_CORE=3.2 # LFRic release to checkout from github  
+CLEAN=0 # Whether to clean the build directory before building
+MODEL=gungho_model # App to build, i.e. lfric_atm or ghungho_model
+DEPENDENCIES_MODULES_PATH=/work/z19/z19/lparisi/nfs-testing/met-lfric-cirrus/environments/lfric/modules/Core # Path to load lfric dependencies modules. These will need to be generated first by spack
 export RDEF_PRECISION="32" # ? 
 export R_TRAN_PRECISION="32"  # Transport scheme precision ?
 export R_BL_PRECISION="32" # Boundary layer scheme precision ?
 export R_SOLVER_PRECISION="32" # Precision of the solver
 export R_PHYS_PRECISION="32" # Precision of physics scheme
+XIOS=xios2
 
 set +x  # Disable command echoing to limit noise from module loading
 
-
 module use $DEPENDENCIES_MODULES_PATH # Make modules with lfric dependencies available. 
-module -I load lfric-meta-gcc-no-xios/3.1.1
+module -I load lfric-meta-gcc-xios2/$RELEASE_APPS
 module load PrgEnv-gnu
 module load cray-hdf5-parallel/1.14.3.5
 module load cray-netcdf-hdf5parallel/4.9.0.17
@@ -54,10 +53,10 @@ if [ $DOWNLOAD -eq 1 ]; then
     
 fi
 
-XIOS_ROOT="/work/d435/d435/lparisid435/met-lfric-cirrus/build_lfric/xios/$XIOS"
-export FFLAGS="-I $XIOS_ROOT/inc $FFLAGS"
-export LIBRARY_PATH=$XIOS_ROOT/lib:$LIBRARY_PATH
-export LDFLAGS="-L $XIOS_ROOT/lib -I $XIOS_ROOT/inc -Wl,-rpath=$XIOS_ROOT/lib $LDFLAGS"
+#XIOS_ROOT="/work/d435/d435/lparisid435/met-lfric-cirrus/build_lfric/xios/$XIOS"
+#export FFLAGS="-I $XIOS_ROOT/inc $FFLAGS"
+#export LIBRARY_PATH=$XIOS_ROOT/lib:$LIBRARY_PATH
+#export LDFLAGS="-L $XIOS_ROOT/lib -I $XIOS_ROOT/inc -Wl,-rpath=$XIOS_ROOT/lib $LDFLAGS"
 
 cd $LFRIC_APPS_DIR/build
 export CRAY_ENVIRONMENT=TRUE
