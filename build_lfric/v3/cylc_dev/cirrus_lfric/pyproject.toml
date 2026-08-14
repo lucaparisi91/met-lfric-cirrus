@@ -1,0 +1,22 @@
+[project]
+name = "cirrus-lfric"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "lparisi", email = "l.parisi@epcc.ed.ac.uk" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "cylc-flow>=8.5.4",
+    "cylc-rose>=1.6.1",
+    "cylc-uiserver>=1.7.1",
+    "metomi-rose>=2.5.1",
+]
+
+[project.scripts]
+cirrus-lfric = "cirrus_lfric:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"

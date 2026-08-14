@@ -19,6 +19,7 @@ class LfricMeta(BundlePackage):
     version("3.0")
     version("3.1.0")
     version("3.1.1")
+    version("3.2")
 
     variant("xios", default=True, description="Whether to build with xios support")
     variant("vernier", default=False, description="Whether to build with vernier support",when="@1:2")
@@ -35,7 +36,8 @@ class LfricMeta(BundlePackage):
     depends_on("py-psyclone@2.5.0", when='@:1.2', type="run")
     depends_on("py-psyclone@3.0.0", when='@2.0', type="run")
     depends_on("py-psyclone@3.1.0", when='@2.1:3.1.0', type="run")
-    depends_on("py-psyclone@3.2.2", when='@3.1.1:', type="run")
+    depends_on("py-psyclone@3.2.2", when='@3.1.1', type="run")
+    depends_on("py-psyclone@3.3.1", when='@3.2', type="run")
     depends_on("py-pyyaml",when='@3.0:', type="run") 
     depends_on("rose-picker", type="run")
 
