@@ -1,0 +1,22 @@
+[install]
+    [[symlink dirs]]
+        [[[localhost]]]            
+            run = /work/z19/z19/lparisi/nfs-testing/met-lfric-cirrus/build_lfric/v3/cylc_dev
+[platforms]
+    [[ex]]
+        hosts = localhost
+        job runner = slurm
+        install target = localhost
+        global init-script="""
+        export HOME=/work/z19/z19/lparisi/nfs-testing/met-lfric-cirrus/build_lfric/v3/cylc_dev
+        . ~/env.sh
+        """
+    
+    [[login]]
+        hosts = localhost
+        install target = localhost
+        job runner = background
+        global init-script="""
+        export HOME=/work/z19/z19/lparisi/nfs-testing/met-lfric-cirrus/build_lfric/v3/cylc_dev
+        . ~/env.sh
+        """
